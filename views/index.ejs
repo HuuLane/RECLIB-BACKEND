@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<title><%= title %></title>
+	<link rel="stylesheet" href="./stylesheets/style.css">
+	<!-- <script src="./../public/javascripts/frontend-utilities.js"></script> -->
+</head>
+
+<body>
+	<h1><%= title %></h1>
+	<p>Welcome to <%= title %></p>
+	<div id="search">
+		<div>
+			<input id="input-input-txt" type="text" placeholder="您要找的书书~" value="">
+			<button id="id-btn-submit">提交</button>
+			<div class="show-board">
+				<!-- <img src="https://img1.doubanio.com/view/subject/l/public/s32295228.jpg" alt=""> -->
+				<!-- <img src="./images/s29832712.jpg" alt=""> -->
+				<!-- <img src="./images/v2-2298a972a8b1e008e505c2d6aec7f074_b.jpg" alt=""> -->
+			</div>
+		</div>
+	</div>
+
+	<script type="module">
+		// 引入我的函数
+		import { ajax, e, es, log, dir } from './javascripts/front-utils.js'
+
+		const input = e('#input-input-txt')
+		const btn = e('#id-btn-submit')
+		const showBoard = e('.show-board')
+
+		btn.addEventListener('click', () => {
+			const value = input.value
+			ajax('post', '/book', value).then((result) => {
+				const data = JSON.parse(result)
+				dir(data)
+				showBoard.innerHTML = `${data}`
+			}).catch((err) => {
+				log('***AJAX发送失败***', err)
+			})
+		})
+	</script>
+
+</body>
+
+</html>

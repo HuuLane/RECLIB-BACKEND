@@ -59,3 +59,11 @@ typings/
 
 # next.js build output
 .next
+
+#
+# my config
+#
+.wakatime-project
+/TODO.md
+/.jshintrc
+public/
