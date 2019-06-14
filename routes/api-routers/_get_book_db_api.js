@@ -2,7 +2,7 @@
 // eslint-disable-next-line
 const { Books, BooksIntro } = require('../../src/db-utils')
 
-const getPage = async ($, pageIndex, perPage) => {
+const getPage = async ($, pageIndex, perPage, specificField = '_id title info.作者 rating score') => {
   // 默认显示 10条
   perPage = Number(perPage) || 10
   if (pageIndex <= 0) {
@@ -17,7 +17,7 @@ const getPage = async ($, pageIndex, perPage) => {
       return null
     }
   }
-  return $.find({}).skip((pageIndex - 1) * perPage).limit(perPage).exec()
+  return $.find({}).skip((pageIndex - 1) * perPage).limit(perPage).select(specificField).exec()
 }
 
 module.exports = {
