@@ -28,6 +28,30 @@ router.options('/', (req, res) => {
   res.sendStatus(200)
 })
 
+const findAll = async (query) => {
+  const queryBook = Books.find({
+    $or: [
+      { _id: query.all },
+      { tags: { $regex: '.*' + query.all + '.*' } },
+      { title: { $regex: '.*' + query.all + '.*' } },
+      { 'info.作者': { $regex: '.*' + query.all + '.*' } }
+    ]
+  })
+  if (query.hasOwnProperty('score')) {
+    queryBook.find({ score: { $gte: Number(query.score) } })
+  }
+  // 如果只是想了解 数据有多少条 (count), 那便只返回 count咯~ 在分页之前
+  if (query.hasOwnProperty('count')) {
+    return queryBook.countDocuments()
+  }
+  // 到最后 总是要分页的 我不会一口把所有资料都吐给你 哈哈哈哈
+  if (query.hasOwnProperty('page')) {
+    return getPage(queryBook, query.page)
+  } else {
+    return getPage(queryBook, 1)
+  }
+}
+
 const urlQuery = async (query) => {
   const queryBook = Books.find({})
   // 查tag
@@ -71,6 +95,19 @@ router.get('/', (req, res) => {
     res.json(API_INFO)
   } else {
     log('req.query', query)
+    // all最高级
+    if (query.hasOwnProperty('all')) {
+      findAll(query)
+        .then(r => {
+          // r 是数组或数字
+          if (r) {
+            res.json(r)
+          } else {
+            res.json(null)
+          }
+        })
+      return
+    }
     // id, 和得到此id intro 是排它性的: 既然查id 其他条件就不会生效
     if (query.hasOwnProperty('id')) {
       Books.find({ _id: query.id })
