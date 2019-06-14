@@ -6,7 +6,6 @@ const express = require('express')
 const path = require('path')
 const cookieParser = require('cookie-parser')
 const logger = require('morgan')
-const session = require('express-session')
 // 引入第三方插件
 
 // 启动服务
@@ -21,19 +20,10 @@ app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
 app.use(cookieParser())
 app.use(express.static(path.join(__dirname, 'public')))
-// 设置 session
-app.set('trust proxy', 1) // trust first proxy
-app.use(session({
-  secret: 'hello',
-  resave: true,
-  saveUninitialized: true,
-  // cookie: { secure: true }
-}))
 
 // 设置路由
 app.use('/', require('./routes/index'))
-app.use('/users', require('./routes/users'))
-app.use('/login', require('./routes/login.js'))
+app.use('/signup', require('./routes/signup.js'))
 app.use('/api', require('./routes/api.js'))
 
 // catch 404 and forward to error handler
