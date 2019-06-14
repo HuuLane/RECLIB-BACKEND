@@ -43,7 +43,10 @@ const User = model('User', 'registeredUser', {
   password: {
     type: String,
     required: true
-    // set: Data.prototype.saltySha1
+  },
+  name: {
+    type: String,
+    required: true
   }
 })
 
