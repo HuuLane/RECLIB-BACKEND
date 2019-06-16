@@ -51,9 +51,25 @@ const User = model('User', 'registeredUser', {
   }
 })
 
+// stock & commit collection
+const StockAndCommit = model('StockAndCommit', 'stocks', {
+  _id: {
+    type: String,
+    required: true,
+    unique: true
+  },
+  stock: {
+    type: Object
+  },
+  comments: {
+    type: Array
+  }
+})
+
 module.exports = {
   db,
   Books,
   BooksIntro,
-  User
+  User,
+  StockAndCommit
 }
