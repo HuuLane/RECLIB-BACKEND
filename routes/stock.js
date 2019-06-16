@@ -39,9 +39,9 @@ router.put('/', async (req, res, next) => {
   // 没有登录
   log('userID', userID)
   if (!name) {
-    return res.json({ code: 0, msg: '请先登录' })
+    return res.json({ code: 0, msg: '借书登录先啊, 衰仔!' })
   }
-  const { id: _id, content } = req.body
+  const { id: _id } = req.body
   const theBook = await StockAndCommit.findOne({
     _id
   })
@@ -49,19 +49,26 @@ router.put('/', async (req, res, next) => {
   if (!theBook) {
     return res.json({ code: 3, msg: '没有该书, 请联系我!' })
   }
-  // 介系评论
-  const comment = {
+  const { count, rentOut } = theBook.stock
+  if (rentOut.length >= count) {
+    return res.json({ code: 0, msg: '不能再借了' })
+  }
+  // 借者信息登记
+  const info = {
     userID,
     name,
-    content
+    date: new Date().getTime()
   }
   try {
-    await theBook.comments.push(comment)
-    // !告诉 mongoose comments 属性发生变化
-    theBook.markModified('comments')
+    log('info', info)
+    await theBook.stock.rentOut.push(info)
+    // ! 这儿坑我许久, comment那个更新好好地, 这个却死活不出来
+    // ! 我猜测是因为 底层实现 无法监视, 数组/对象发生了变化, 所有要手动通知.
+    theBook.markModified('stock')
     await theBook.save()
-    res.json({ code: 1, msg: '评价生效' })
+    res.json({ code: 1, msg: '借书成功' })
   } catch (error) {
+    log('error', error)
     res.json({ code: 5, msg: '数据库发生错误, 请联系我' })
   }
 })
@@ -69,22 +76,18 @@ router.put('/', async (req, res, next) => {
 router.get('/', async (req, res) => {
   const { id: _id } = req.body
   const theBook = await StockAndCommit.findOne({
-    comments: { $exists: true },
     _id
   })
   // FIXME:如果没有该字段会报错, 但这样写法很蠢, 向数据库要了两次
   if (!theBook) {
-    return res.json({ code: 0, msg: '没有评论' })
+    return res.json({ code: 0, msg: '没有此书, 联系我!' })
   }
-  // 现在可以安心 get comments
-  const { comments } = await StockAndCommit.findOne({
+  // 现在可以安心 get stock
+  const { stock } = await StockAndCommit.findOne({
     _id
-  }).select('comments').exec()
+  }).select('stock').exec()
   // 真没有..
-  if (!comments.length) {
-    return res.json({ code: 0, msg: '没有评论' })
-  }
-  res.json({ code: 1, msg: '有该书', comments })
+  res.json({ code: 1, msg: '有该书记录', stock })
 })
 
 module.exports = router
