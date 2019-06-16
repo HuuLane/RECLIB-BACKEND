@@ -65,7 +65,8 @@ router.put('/', async (req, res, next) => {
     }
     // 设置 session
     req.session.name = user.name
-    req.session.id = user._id
+    // objectID
+    req.session.userID = user._id.toString()
     res.json({ code: 1, msg: '登录成功', userName: user.name })
   })
 })
