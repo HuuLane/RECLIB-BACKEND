@@ -1,5 +1,5 @@
-var express = require('express')
-var router = express.Router()
+const express = require('express')
+const router = express.Router()
 const { User } = require('../src/db-utils')
 // eslint-disable-next-line
 const { log } = console
@@ -32,7 +32,7 @@ router.post('/', (req, res, next) => {
     }
     res.json({
       code: 0,
-      msg: '创建账户失败'
+      msg: '创建账户失败, 请联系我'
     })
   })
 })
