@@ -73,8 +73,12 @@ router.put('/', async (req, res, next) => {
   }
 })
 
-router.get('/', async (req, res) => {
-  const { id: _id } = req.body
+router.get('/:bookID', async (req, res) => {
+  // const { id: _id } = req.body
+  const _id = req.params.bookID
+  if (!_id) {
+    return res.json({ code: 0, msg: '请<del>州长夫人..</del>带上参数!' })
+  }
   const theBook = await StockAndCommit.findOne({
     _id
   })
