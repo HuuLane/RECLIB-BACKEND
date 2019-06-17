@@ -15,8 +15,14 @@ router.options('/', (req, res) => {
   res.sendStatus(200)
 })
 
-router.post('/', (req, res, next) => {
-  const someone = new User(req.body)
+router.post('/', async (req, res, next) => {
+  // TODO
+  const count = await User.find({}).countDocuments().exec()
+  const userInfo = {
+    ...req.body,
+    index: count + 1
+  }
+  const someone = new User(userInfo)
   someone.save().then((response) => {
     res.json({
       code: 1,
@@ -30,6 +36,7 @@ router.post('/', (req, res, next) => {
       })
       return
     }
+    // log(err)
     res.json({
       code: 0,
       msg: '创建账户失败, 请联系我'
