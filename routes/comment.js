@@ -1,5 +1,5 @@
 // 引入数据库
-const { StockAndCommit } = require('../src/db-utils')
+const { StockAndCommit, User } = require('../src/db-utils')
 // eslint-disable-next-line
 const { log } = console
 // 引入路由
@@ -17,10 +17,6 @@ router.use(session({
   store: new FileStore(), // 本地存储session（文本文件，也可以选择其他store，比如redis的）
   saveUninitialized: false, // 是否自动保存未初始化的会话，建议false
   resave: false, // 是否每次都重新保存会话，建议false
-  // cookie: {
-  //   maxAge: 30 * 24 * 60 * 1000 // 有效期，单位是毫秒
-  // },
-  // cookie: { domain: 'http://localhost:8080', path: '/', httpOnly: true, secure: false, maxAge: null }
   cookie: { path: '/', httpOnly: true, secure: false, maxAge: null }
 }))
 
@@ -37,37 +33,44 @@ router.all('/', function (req, res, next) {
 router.put('/', async (req, res, next) => {
   const { name, userID } = req.session
   // 没有登录
-  log('userID', userID)
   if (!name) {
     return res.json({ code: 0, msg: '请先登录' })
   }
-  const { id: _id, content } = req.body
-  const theBook = await StockAndCommit.findOne({
-    _id
-  })
-  // 没有该书
-  if (!theBook) {
-    return res.json({ code: 3, msg: '没有该书, 请联系我!' })
-  }
-  // 介系评论
-  const comment = {
-    userID,
+  // @params: _id: 书的id, content: 评论内容
+  const { id: bookID, content } = req.body
+  const date = new Date().getTime()
+  // 存贮到 document of book 的数据
+  const dataOfBook = {
     name,
-    content
+    userID,
+    content,
+    date
+  }
+  // 存贮到 document of User 的数据
+  const dataOfUser = {
+    bookID,
+    content,
+    date
   }
   try {
-    await theBook.comments.push(comment)
-    // !告诉 mongoose comments 属性发生变化
-    theBook.markModified('comments')
-    await theBook.save()
-    res.json({ code: 1, msg: '评价生效' })
+    // !两头存数据
+    await Promise.all([
+      User.updateOne({ _id: userID }, { $push: { 'activity.comments': dataOfUser } }),
+      StockAndCommit.updateOne({ _id: bookID }, { $push: { 'comments': dataOfBook } })
+    ])
+    res.json({ code: 1, msg: '我很确认收到了您自由的言论' })
   } catch (error) {
+    log('error', error)
     res.json({ code: 5, msg: '数据库发生错误, 请联系我' })
   }
 })
 
-router.get('/', async (req, res) => {
-  const { id: _id } = req.body
+router.get('/:bookID', async (req, res) => {
+  // const { id: _id } = req.body
+  const _id = req.params.bookID
+  if (!_id) {
+    return res.json({ code: 0, msg: '请<del>州长夫人..</del>带上参数!' })
+  }
   const theBook = await StockAndCommit.findOne({
     comments: { $exists: true },
     _id
@@ -84,7 +87,7 @@ router.get('/', async (req, res) => {
   if (!comments.length) {
     return res.json({ code: 0, msg: '没有评论' })
   }
-  res.json({ code: 1, msg: '有该书', comments })
+  res.json({ code: 1, msg: '读取评论成功', comments })
 })
 
 module.exports = router
