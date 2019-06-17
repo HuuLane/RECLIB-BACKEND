@@ -1,5 +1,5 @@
 // 引入数据库
-const { StockAndCommit } = require('../src/db-utils')
+const { StockAndCommit, User } = require('../src/db-utils')
 // eslint-disable-next-line
 const { log } = console
 // 引入路由
@@ -13,14 +13,10 @@ const FileStore = require('session-file-store')(session)
 
 router.use(session({
   // name: identityKey,
-  secret: 'huuuu', // 用来对session id相关的cookie进行签名
-  store: new FileStore(), // 本地存储session（文本文件，也可以选择其他store，比如redis的）
-  saveUninitialized: false, // 是否自动保存未初始化的会话，建议false
-  resave: false, // 是否每次都重新保存会话，建议false
-  // cookie: {
-  //   maxAge: 30 * 24 * 60 * 1000 // 有效期，单位是毫秒
-  // },
-  // cookie: { domain: 'http://localhost:8080', path: '/', httpOnly: true, secure: false, maxAge: null }
+  secret: 'huuuu',
+  store: new FileStore(),
+  saveUninitialized: false,
+  resave: false,
   cookie: { path: '/', httpOnly: true, secure: false, maxAge: null }
 }))
 
@@ -37,13 +33,13 @@ router.all('/', function (req, res, next) {
 router.put('/', async (req, res, next) => {
   const { name, userID } = req.session
   // 没有登录
-  log('userID', userID)
+  // log('userID', userID)
   if (!name) {
     return res.json({ code: 0, msg: '借书登录先啊, 衰仔!' })
   }
-  const { id: _id } = req.body
+  const { id: bookID } = req.body
   const theBook = await StockAndCommit.findOne({
-    _id
+    _id: bookID
   })
   // 没有该书
   if (!theBook) {
@@ -54,18 +50,28 @@ router.put('/', async (req, res, next) => {
     return res.json({ code: 0, msg: '不能再借了' })
   }
   // 借者信息登记
+  const date = new Date().getTime()
   const info = {
     userID,
     name,
-    date: new Date().getTime()
+    date
+  }
+  // 存贮到 document of User 的数据
+  const userInfo = {
+    bookID,
+    date
   }
   try {
-    log('info', info)
-    await theBook.stock.rentOut.push(info)
+    // log('info', info)
     // ! 这儿坑我许久, comment那个更新好好地, 这个却死活不出来
     // ! 我猜测是因为 底层实现 无法监视, 数组/对象发生了变化, 所有要手动通知.
     theBook.markModified('stock')
-    await theBook.save()
+    await theBook.stock.rentOut.push(info)
+    // 保存修改内容, 已经 Update 用户数据
+    await Promise.all([
+      theBook.save(),
+      User.updateOne({ _id: userID }, { $push: { 'activity.rentBook': userInfo } })
+    ])
     res.json({ code: 1, msg: '借书成功' })
   } catch (error) {
     log('error', error)
