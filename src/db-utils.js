@@ -48,16 +48,27 @@ const User = model('User', 'registeredUser', {
     type: String,
     required: true,
     unique: true
+  },
+  index: {
+    type: Number,
+    required: true,
+    unique: true
+  },
+  activity: {
+    type: Object,
+    rentBook: [Array],
+    comments: [Array]
+  },
+  date: {
+    type: Date,
+    // `Date.now()` returns the current unix timestamp as a number
+    default: Date.now()
   }
 })
 
 // stock & commit collection
 const StockAndCommit = model('StockAndCommit', 'stocks', {
-  _id: {
-    type: String,
-    required: true,
-    unique: true
-  },
+  _id: String,
   stock: {
     type: Object
   },
