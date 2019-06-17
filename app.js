@@ -28,6 +28,7 @@ app.use('/login', require('./routes/login.js'))
 app.use('/api', require('./routes/api.js'))
 app.use('/comment', require('./routes/comment.js'))
 app.use('/stock', require('./routes/stock.js'))
+app.use('/logout', require('./routes/logout.js'))
 
 // catch 404 and forward to error handler
 app.use((req, res, next) => {
