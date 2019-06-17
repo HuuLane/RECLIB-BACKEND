@@ -16,11 +16,7 @@ router.use(session({
   store: new FileStore(), // 本地存储session（文本文件，也可以选择其他store，比如redis的）
   saveUninitialized: false, // 是否自动保存未初始化的会话，建议false
   resave: false, // 是否每次都重新保存会话，建议false
-  // cookie: {
-  //   maxAge: 30 * 24 * 60 * 1000 // 有效期，单位是毫秒
-  // },
-  // cookie: { domain: 'http://localhost:8080', path: '/', httpOnly: true, secure: false, maxAge: null }
-  cookie: { path: '/', httpOnly: true, secure: false, maxAge: null }
+  cookie: { path: '/', httpOnly: true, secure: false, maxAge: 30 * 24 * 3600 * 1000 }
 }))
 
 const cors = require('cors')
