@@ -1,5 +1,5 @@
 // 引入数据库
-const { StockAndCommit, User } = require('../src/db-utils')
+const { Books, StockAndCommit, User } = require('../src/db-utils')
 // eslint-disable-next-line
 const { log } = console
 // 引入路由
@@ -45,6 +45,10 @@ router.put('/', async (req, res, next) => {
   if (!theBook) {
     return res.json({ code: 3, msg: '没有该书, 请联系我!' })
   }
+  // 取出书名
+  const { title: bookName } = await Books.findOne({
+    _id: bookID
+  })
   const { count, rentOut } = theBook.stock
   if (rentOut.length >= count) {
     return res.json({ code: 0, msg: '不能再借了' })
@@ -58,6 +62,7 @@ router.put('/', async (req, res, next) => {
   }
   // 存贮到 document of User 的数据
   const userInfo = {
+    bookName,
     bookID,
     date
   }

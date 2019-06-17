@@ -1,5 +1,5 @@
 // 引入数据库
-const { StockAndCommit, User } = require('../src/db-utils')
+const { Books, StockAndCommit, User } = require('../src/db-utils')
 // eslint-disable-next-line
 const { log } = console
 // 引入路由
@@ -38,6 +38,17 @@ router.put('/', async (req, res, next) => {
   }
   // @params: _id: 书的id, content: 评论内容
   const { id: bookID, content } = req.body
+  const theBook = await StockAndCommit.findOne({
+    comments: { $exists: true },
+    _id: bookID
+  })
+  if (!theBook) {
+    res.json({ code: 4, msg: '没有此书呀, 有疑问请联系我' })
+  }
+  // 取出书名
+  const { title: bookName } = await Books.findOne({
+    _id: bookID
+  })
   const date = new Date().getTime()
   // 存贮到 document of book 的数据
   const dataOfBook = {
@@ -48,6 +59,7 @@ router.put('/', async (req, res, next) => {
   }
   // 存贮到 document of User 的数据
   const dataOfUser = {
+    bookName,
     bookID,
     content,
     date
