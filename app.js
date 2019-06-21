@@ -11,17 +11,13 @@ const compression = require('compression')
 
 // 启动服务
 const app = express()
+// 要放最上面
 app.use(compression())
-// view engine setup
-app.set('views', path.join(__dirname, 'views'))
-app.set('view engine', 'ejs')
-
 app.use(logger('dev'))
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
 app.use(cookieParser())
 app.use(express.static(path.join(__dirname, 'public')))
-// app.use(compression())
 
 // 设置路由
 app.use('/', require('./routes/'))
