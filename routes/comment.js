@@ -38,17 +38,15 @@ router.put('/', async (req, res, next) => {
   }
   // @params: _id: 书的id, content: 评论内容
   const { id: bookID, content } = req.body
-  const theBook = await StockAndCommit.findOne({
-    comments: { $exists: true },
+  // 取出书名
+  const theBook = await Books.findOne({
     _id: bookID
   })
   if (!theBook) {
-    res.json({ code: 4, msg: '没有此书呀, 有疑问请联系我' })
+    return res.json({ code: 4, msg: '没有此书呀, 有疑问请联系我' })
   }
-  // 取出书名
-  const { title: bookName } = await Books.findOne({
-    _id: bookID
-  })
+  // 取出 title
+  const { title: bookName } = theBook
   const date = new Date().getTime()
   // 存贮到 document of book 的数据
   const dataOfBook = {
