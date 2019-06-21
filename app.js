@@ -7,10 +7,11 @@ const path = require('path')
 const cookieParser = require('cookie-parser')
 const logger = require('morgan')
 // 引入第三方插件
+const compression = require('compression')
 
 // 启动服务
 const app = express()
-
+app.use(compression())
 // view engine setup
 app.set('views', path.join(__dirname, 'views'))
 app.set('view engine', 'ejs')
@@ -20,9 +21,10 @@ app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
 app.use(cookieParser())
 app.use(express.static(path.join(__dirname, 'public')))
+// app.use(compression())
 
 // 设置路由
-app.use('/', require('./routes/index'))
+app.use('/', require('./routes/'))
 app.use('/signup', require('./routes/signup.js'))
 app.use('/login', require('./routes/login.js'))
 app.use('/api', require('./routes/api.js'))
