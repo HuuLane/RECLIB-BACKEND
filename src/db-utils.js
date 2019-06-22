@@ -4,8 +4,8 @@ const connetDB = (dbName) => {
   const url = `mongodb://localhost:27017/${dbName}`
   mongoose.connect(url, { useNewUrlParser: true, useCreateIndex: true })
   const db = mongoose.connection
-  db.on('error', console.error.bind(console, 'MongoDB 连接错误：'))
-  db.once('open', console.log.bind(console, 'MongoDB开始工作！'))
+  db.on('error', console.error.bind(console, 'MongoDB\'s connection is err!'))
+  db.once('open', console.log.bind(console, '4. MongoDB is working!'))
   return db
 }
 const model = (modelName, collectionName, schema) => {

@@ -4,17 +4,6 @@ const { User } = require('../src/db-utils')
 // eslint-disable-next-line
 const { log } = console
 
-router.all('/', function (req, res, next) {
-  res.header('Access-Control-Allow-Origin', '*')
-  res.header('Access-Control-Allow-Headers', 'Content-Type')
-  res.header('Access-Control-Allow-Methods', 'PUT, OPTIONS')
-  next()
-})
-
-router.options('/', (req, res) => {
-  res.sendStatus(200)
-})
-
 router.post('/', async (req, res, next) => {
   // TODO
   const count = await User.find({}).countDocuments().exec()

@@ -6,13 +6,18 @@ const express = require('express')
 const path = require('path')
 const cookieParser = require('cookie-parser')
 const logger = require('morgan')
-// 引入第三方插件
+// 引入插件
 const compression = require('compression')
-
+const cors = require('cors')
 // 启动服务
 const app = express()
-// 要放最上面
+// !使用 gzip 压缩, 要写最上面
 app.use(compression())
+// 非生产环境允许跨域
+if (!process.env.NODE_ENV === 'production') {
+  log('okay')
+  app.use(cors())
+}
 app.use(logger('dev'))
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
@@ -43,5 +48,8 @@ app.use((err, req, res, next) => {
   res.status(err.status || 500)
   res.render('error')
 })
-log('服务器已启动', 'http://127.0.0.1:3000')
+// log(process.env)
+log('1. Server starts to run')
+log(`2. State: ${process.env.NODE_ENV}`)
+log(`3. IP: ${'http://127.0.0.1:3000'}`)
 module.exports = app
