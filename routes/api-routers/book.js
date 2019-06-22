@@ -16,18 +16,6 @@ const { Books, BooksIntro } = require('../../src/db-utils')
 const { log, objectIsEmpty } = require('../../src/utils')
 const { getPage } = require('./_get_book_db_api')
 
-// *此处有一个坑, 浏览器发送跨域请求时, 会先自动发 options 探测一下..
-router.all('/', function (req, res, next) {
-  res.header('Access-Control-Allow-Origin', '*')
-  res.header('Access-Control-Allow-Headers', 'Content-Type')
-  res.header('Access-Control-Allow-Methods', 'PUT, OPTIONS, GET')
-  next()
-})
-
-router.options('/', (req, res) => {
-  res.sendStatus(200)
-})
-
 const findAll = async (query) => {
   const queryBook = Books.find({
     $or: [

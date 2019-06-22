@@ -20,16 +20,6 @@ router.use(session({
   cookie: { path: '/', httpOnly: true, secure: false, maxAge: null }
 }))
 
-// 跨域设置
-const cors = require('cors')
-router.use(cors({ credentials: true, origin: 'http://localhost:8080' }))
-router.all('/', function (req, res, next) {
-  // res.header('Access-Control-Allow-Origin', '*')
-  res.header('Access-Control-Allow-Headers', 'X-Requested-With, X-HTTP-Method-Override, Content-Type, Accept')
-  res.header('Access-Control-Allow-Methods', 'PUT, GET, OPTIONS')
-  next()
-})
-
 router.put('/', async (req, res, next) => {
   const { name, userID } = req.session
   // 没有登录
