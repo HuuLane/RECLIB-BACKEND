@@ -1,5 +1,7 @@
 /* eslint-env node */
 const { log } = require('./src/utils')
+// 奇怪的 bug
+const env = process.env.NODE_ENV.trim()
 
 const createError = require('http-errors')
 const express = require('express')
@@ -10,18 +12,23 @@ const logger = require('morgan')
 const compression = require('compression')
 const cors = require('cors')
 const ip = require('ip')
+const history = require('connect-history-api-fallback')
+
 // 启动服务
 const app = express()
 // !使用 gzip 压缩, 要写最上面
 app.use(compression())
 // 非生产环境允许跨域
-if (process.env.NODE_ENV !== 'production') {
+if (env !== 'production') {
+  log('调试环境')
   app.use(cors())
+  app.use(logger('dev'))
 }
-app.use(logger('dev'))
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
 app.use(cookieParser())
+// 使用 history 模式
+app.use(history())
 app.use(express.static(path.join(__dirname, 'public')))
 
 // 设置路由
@@ -46,10 +53,11 @@ app.use((err, req, res, next) => {
   res.locals.error = req.app.get('env') === 'development' ? err : {}
   // render the error page
   res.status(err.status || 500)
-  res.render('error')
+  // 跳转至 404 页面
+  res.redirect('/#/404')
 })
 
 log('1. Server starts to run')
-log(`2. Environment: ${process.env.NODE_ENV}`)
+log(`2. Environment: ${env}`)
 log(`3. IP: http://127.0.0.1:3000 & ${ip.address()}`)
 module.exports = app
