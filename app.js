@@ -9,13 +9,13 @@ const logger = require('morgan')
 // 引入插件
 const compression = require('compression')
 const cors = require('cors')
+const ip = require('ip')
 // 启动服务
 const app = express()
 // !使用 gzip 压缩, 要写最上面
 app.use(compression())
 // 非生产环境允许跨域
-if (!process.env.NODE_ENV === 'production') {
-  log('okay')
+if (process.env.NODE_ENV !== 'production') {
   app.use(cors())
 }
 app.use(logger('dev'))
@@ -48,8 +48,8 @@ app.use((err, req, res, next) => {
   res.status(err.status || 500)
   res.render('error')
 })
-// log(process.env)
+
 log('1. Server starts to run')
-log(`2. State: ${process.env.NODE_ENV}`)
-log(`3. IP: ${'http://127.0.0.1:3000'}`)
+log(`2. Environment: ${process.env.NODE_ENV}`)
+log(`3. IP: http://127.0.0.1:3000 & ${ip.address()}`)
 module.exports = app
