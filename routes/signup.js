@@ -5,7 +5,6 @@ const { User } = require('../src/db-utils')
 const { log } = console
 
 router.post('/', async (req, res, next) => {
-  // TODO
   const count = await User.find({}).countDocuments().exec()
   const userInfo = {
     ...req.body,
@@ -21,15 +20,15 @@ router.post('/', async (req, res, next) => {
     if (err.code === 11000) {
       res.json({
         code: 2,
-        msg: '用户名 || 邮箱已有人先'
+        msg: '用户名 或者 邮箱已有人先'
       })
       return
     }
-    // log(err)
     res.json({
       code: 0,
       msg: '创建账户失败, 请联系我'
     })
+    console.error('*signup', err)
   })
 })
 

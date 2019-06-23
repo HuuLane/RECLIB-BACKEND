@@ -5,20 +5,9 @@ const { log } = console
 // 引入路由
 const express = require('express')
 const router = express.Router()
-// session 管理
-// session manage
-const session = require('express-session')
-const FileStore = require('session-file-store')(session)
-// const identityKey = 'RECLAB'
 
-router.use(session({
-  // name: identityKey,
-  secret: 'huuuu',
-  store: new FileStore(),
-  saveUninitialized: false,
-  resave: false,
-  cookie: { path: '/', httpOnly: true, secure: false, maxAge: null }
-}))
+// session manage
+router.use(require('./api-routers/session'))
 
 router.put('/', async (req, res, next) => {
   const { name, userID } = req.session
@@ -36,9 +25,7 @@ router.put('/', async (req, res, next) => {
     return res.json({ code: 3, msg: '没有该书, 请联系我!' })
   }
   // 取出书名
-  const { title: bookName } = await Books.findOne({
-    _id: bookID
-  })
+  const { title: bookName } = theBook
   const { count, rentOut } = theBook.stock
   if (rentOut.length >= count) {
     return res.json({ code: 0, msg: '不能再借了' })
@@ -62,7 +49,7 @@ router.put('/', async (req, res, next) => {
     // ! 我猜测是因为 底层实现 无法监视, 数组/对象发生了变化, 所有要手动通知.
     theBook.markModified('stock')
     await theBook.stock.rentOut.push(info)
-    // 保存修改内容, 已经 Update 用户数据
+    // 保存修改内容, 以及 Update 用户数据
     await Promise.all([
       theBook.save(),
       User.updateOne({ _id: userID }, { $push: { 'activity.rentBook': userInfo } })
@@ -75,24 +62,16 @@ router.put('/', async (req, res, next) => {
 })
 
 router.get('/:bookID', async (req, res) => {
-  // const { id: _id } = req.body
   const _id = req.params.bookID
   if (!_id) {
     return res.json({ code: 0, msg: '请<del>州长夫人..</del>带上参数!' })
   }
-  const theBook = await StockAndCommit.findOne({
-    _id
-  })
-  // FIXME:如果没有该字段会报错, 但这样写法很蠢, 向数据库要了两次
-  if (!theBook) {
+  try {
+    const { stock } = await StockAndCommit.findOne({ _id })
+    res.json({ code: 1, msg: '有该书记录', stock })
+  } catch (error) {
     return res.json({ code: 0, msg: '没有此书, 联系我!' })
   }
-  // 现在可以安心 get stock
-  const { stock } = await StockAndCommit.findOne({
-    _id
-  }).select('stock').exec()
-  // 真没有..
-  res.json({ code: 1, msg: '有该书记录', stock })
 })
 
 module.exports = router
