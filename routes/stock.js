@@ -1,5 +1,5 @@
 // 引入数据库
-const { Books, StockAndCommit, User } = require('../src/db-utils')
+const { StockAndCommit, User } = require('../src/db-utils')
 // eslint-disable-next-line
 const { log } = console
 // 引入路由
