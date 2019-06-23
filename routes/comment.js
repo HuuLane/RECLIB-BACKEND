@@ -64,14 +64,11 @@ router.get('/:bookID', async (req, res) => {
     comments: { $exists: true },
     _id
   })
-  // FIXME:如果没有该字段会报错, 但这样写法很蠢, 向数据库要了两次
   if (!theBook) {
     return res.json({ code: 0, msg: '没有评论' })
   }
   // 现在可以安心 get comments
-  const { comments } = await StockAndCommit.findOne({
-    _id
-  }).select('comments').exec()
+  const { comments } = theBook
   // 真没有..
   if (!comments.length) {
     return res.json({ code: 0, msg: '没有评论' })
