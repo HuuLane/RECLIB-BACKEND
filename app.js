@@ -1,7 +1,8 @@
 /* eslint-env node */
 const { log } = require('./src/utils')
 // 奇怪的 bug
-const env = process.env.NODE_ENV.trim()
+// const env = process.env.NODE_ENV.trim()
+const env = 'production'
 
 const createError = require('http-errors')
 const express = require('express')
@@ -40,6 +41,8 @@ app.use('/comment', require('./routes/comment.js'))
 app.use('/stock', require('./routes/stock.js'))
 app.use('/logout', require('./routes/logout.js'))
 app.use('/profile', require('./routes/profile.js'))
+// 盗链.. 让 server 来中转.
+app.use('/images', require('./routes/images.js'))
 
 // catch 404 and forward to error handler
 app.use((req, res, next) => {
