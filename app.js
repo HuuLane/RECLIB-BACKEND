@@ -1,8 +1,7 @@
 /* eslint-env node */
 const { log } = require('./src/utils')
 // 奇怪的 bug
-// const env = process.env.NODE_ENV.trim()
-const env = 'production'
+const env = process.env.NODE_ENV
 
 const createError = require('http-errors')
 const express = require('express')
@@ -57,10 +56,10 @@ app.use((err, req, res, next) => {
   // render the error page
   res.status(err.status || 500)
   // 跳转至 404 页面
-  res.redirect('/#/404')
+  res.redirect('/404')
 })
 
 log('1. Server starts to run')
 log(`2. Environment: ${env}`)
-log(`3. IP: http://127.0.0.1:3000 & ${ip.address()}`)
+log(`3. IP: http://127.0.0.1:3000`)
 module.exports = app
