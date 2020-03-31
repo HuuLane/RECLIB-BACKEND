@@ -12,16 +12,23 @@ const cors = require('cors')
 const history = require('connect-history-api-fallback')
 
 const app = express()
-registerLogger(app)
 
 if (env === 'production') {
-  // 使用 history 模式
   app.use(compression())
+  //  HTML5 history complements Vue router mode
   app.use(history())
+  registerLogger(app)
 } else {
-  logger.info('调试环境')
-  app.use(cors())
+  logger.info("LET'S DEV")
+  app.use(require('morgan')('dev'))
+  app.use(
+    cors({
+      credentials: true,
+      origin: 'http://localhost:8081'
+    })
+  )
 }
+
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
 app.use(cookieParser())
