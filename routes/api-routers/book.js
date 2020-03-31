@@ -13,7 +13,7 @@ const router = express.Router()
 
 // 引入数据库
 const { Books, BooksIntro } = require('../../src/db-utils')
-const { log, objectIsEmpty } = require('../../src/utils')
+const { logger, objectIsEmpty } = require('../../utils')
 const { getPage } = require('./_get_book_db_api')
 
 const findAll = async (query) => {
@@ -57,7 +57,7 @@ const urlQuery = async (query) => {
   }
   // 评分筛选
   if (query.hasOwnProperty('score')) {
-    log('Number(query.score)', Number(query.score))
+    logger.info('Number(query.score)', Number(query.score))
     queryBook.find({ score: { $gte: Number(query.score) } })
   }
   // 如果只是想了解 数据有多少条 (count), 那便只返回 count咯~ 在分页之前
@@ -82,7 +82,7 @@ router.get('/', (req, res) => {
     }
     res.json(API_INFO)
   } else {
-    log('req.query', query)
+    logger.info('req.query', query)
     // all最高级
     if (query.hasOwnProperty('all')) {
       findAll(query)
@@ -125,20 +125,20 @@ router.get('/', (req, res) => {
     urlQuery(query).then(r => {
       res.json(r)
     }).catch(err => {
-      log('err', err)
+      logger.info('err', err)
     })
   }
 })
 
 router.post('/', (req, res) => {
   const body = req.body
-  log('body', body)
+  logger.info('body', body)
   Books.findOne({ tags: body.content })
     .then((result) => {
       res.send(result)
     })
     .catch((err) => {
-      log('err', err)
+      logger.info('err', err)
     })
 })
 
