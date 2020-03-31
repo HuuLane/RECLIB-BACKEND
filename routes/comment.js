@@ -1,7 +1,7 @@
 // 引入数据库
 const { Books, StockAndCommit, User } = require('../src/db-utils')
 // eslint-disable-next-line
-const { log } = console
+const { logger } = require('../utils')
 // 引入路由
 const express = require('express')
 const router = express.Router()
