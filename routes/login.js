@@ -34,7 +34,7 @@ router.put('/', async (req, res, next) => {
     })
     return
   }
-  req.session.regenerate((err) => {
+  req.session.regenerate(err => {
     if (err) {
       console.error('生成 session', err)
       res.json({ code: 3, msg: '奇怪的错误, 请联系我!' })
