@@ -1,19 +1,25 @@
 const mongoose = require('mongoose')
 
-const connetDB = (dbName) => {
+const connetDB = dbName => {
   const url = `mongodb://localhost:27017/${dbName}`
   mongoose.connect(url, { useNewUrlParser: true, useCreateIndex: true })
   const db = mongoose.connection
-  db.on('error', console.error.bind(console, 'MongoDB\'s connection is err!'))
-  db.once('open', console.log.bind(console, '4. MongoDB is working!'))
+  db.on('error', console.error.bind(console, "MongoDB's connection is err!"))
+  db.once('open', console.log.bind(console, 'MongoDB is connected!'))
   return db
 }
-const model = (modelName, collectionName, schema) => {
-  const _schema = new mongoose.Schema(schema, {
-    // mongoose 会自动插入 _v字段, 设为 false 取消
+
+const model = (modelName, collectionName, properties, methods = {}) => {
+  const schema = new mongoose.Schema(properties, {
+    // disable mongoose auto-inserted _v filed
     versionKey: false
   })
-  return mongoose.model(modelName, _schema, collectionName)
+  // add methods
+  for (const [methodNane, method] of Object.entries(methods)) {
+    schema[methodNane] = method
+  }
+  // compiling schema into a Model.
+  return mongoose.model(modelName, schema, collectionName)
 }
 
 const db = connetDB('doubanBook')
