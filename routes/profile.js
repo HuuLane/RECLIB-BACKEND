@@ -1,13 +1,10 @@
-// 引入数据库
-const { User } = require('../src/db-utils')
-// eslint-disable-next-line
-const { log } = console
+const { User } = require('../db')
 // 引入路由
 const express = require('express')
 const router = express.Router()
 
 // session manage
-router.use(require('./api-routers/session'))
+router.use(require('./session'))
 
 router.get('/', async (req, res, next) => {
   const { userID } = req.session

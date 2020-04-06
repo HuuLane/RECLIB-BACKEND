@@ -1,5 +1,5 @@
 // 引入数据库
-const { StockAndCommit, User, Books } = require('../src/db-utils')
+const { StockAndCommit, User, Books } = require('../db')
 // eslint-disable-next-line
 const { log } = console
 // 引入路由
@@ -7,7 +7,7 @@ const express = require('express')
 const router = express.Router()
 
 // session manage
-router.use(require('./api-routers/session'))
+router.use(require('./session'))
 
 router.put('/', async (req, res, next) => {
   const { name, userID } = req.session
@@ -54,7 +54,10 @@ router.put('/', async (req, res, next) => {
     // 保存修改内容, 以及 Update 用户数据
     await Promise.all([
       theBook.save(),
-      User.updateOne({ _id: userID }, { $push: { 'activity.rentBook': userInfo } })
+      User.updateOne(
+        { _id: userID },
+        { $push: { 'activity.rentBook': userInfo } }
+      )
     ])
     res.json({ code: 1, msg: '借书成功' })
   } catch (error) {

@@ -5,7 +5,7 @@ const express = require('express')
 const router = express.Router()
 
 // session manage
-router.use(require('./api-routers/session'))
+router.use(require('./session'))
 
 router.get('/', async (req, res) => {
   const { name } = req.session
