@@ -16,7 +16,7 @@ const model = (modelName, collectionName, properties, methods = {}) => {
   })
   // add methods
   for (const [methodNane, method] of Object.entries(methods)) {
-    schema[methodNane] = method
+    schema.statics[methodNane] = method
   }
   // compiling schema into a Model.
   return mongoose.model(modelName, schema, collectionName)
@@ -36,7 +36,7 @@ const Books = model('Books', 'brief', {
 
 const BooksIntro = model('BooksIntro', 'intro', {
   _id: String,
-  intro: Array
+  intro: [String, String]
 })
 
 // user collection

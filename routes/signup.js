@@ -1,6 +1,6 @@
 const express = require('express')
 const router = express.Router()
-const { User } = require('../src/db-utils')
+const { User } = require('../db')
 // eslint-disable-next-line
 const { log } = console
 

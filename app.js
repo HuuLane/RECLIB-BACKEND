@@ -24,6 +24,7 @@ if (env === 'production') {
   app.use(
     cors({
       credentials: true,
+      // for vue cli
       origin: 'http://localhost:8081'
     })
   )
@@ -37,7 +38,7 @@ app.use(express.static(path.join(__dirname, 'public')))
 // Router
 app.use('/signup', require('./routes/signup.js'))
 app.use('/login', require('./routes/login.js'))
-app.use('/api', require('./routes/api.js'))
+app.use('/book', require('./routes/book.js'))
 app.use('/comment', require('./routes/comment.js'))
 app.use('/stock', require('./routes/stock.js'))
 app.use('/logout', require('./routes/logout.js'))
@@ -57,7 +58,6 @@ app.use((err, req, res, next) => {
   res.locals.error = req.app.get('env') === 'development' ? err : {}
   // render the error page
   res.status(err.status || 500)
-  // 跳转至 404 页面
   res.redirect('/404')
 })
 
