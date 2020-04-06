@@ -1,23 +1,58 @@
-/**
- * restful api
- * book 路由
- * 1. 通过 id `?id={id}`精确查询一个条目, 或用 `?intro={id}`得到简介.
- * 2. 通过 tag or author or title 查询多条内容, 只返回第一页数据(10条以内)
- * 3. 通过 score, 筛选评分
- * 4. 如果带上 count 则返回一个数字有多少条.
- * 5. ?page={pageIndex} 得到该页的 documents
- * 写于: 5/29/晴
+/*
+ * For /api/book
  */
 const express = require('express')
+const asyncHandler = require('express-async-handler')
 const router = express.Router()
 
-// 引入数据库
 const { Books, BooksIntro } = require('../../src/db-utils')
 const { logger, objectIsEmpty } = require('../../utils')
-const { getPage } = require('./_get_book_db_api')
 
-const findAll = async (query) => {
-  const queryBook = Books.find({
+const getPage = async (
+  $,
+  pageIndex,
+  perPage,
+  specificField = '_id title info.作者 rating score'
+) => {
+  // default result 10
+  perPage = Number(perPage) || 10
+  if (pageIndex <= 0) {
+    pageIndex = 1
+  } else {
+    const total = await $.countDocuments()
+    const maxPage = Math.ceil(total / perPage)
+    if (pageIndex > maxPage) {
+      return null
+    }
+  }
+
+  return $.find({})
+    .skip((pageIndex - 1) * perPage)
+    .limit(perPage)
+    .select(specificField)
+    .exec()
+}
+
+const chainingQueriesFilter = async (cq, query) => {
+  // cq stands for chaining queries
+  if (query.hasOwnProperty('score')) {
+    cq.find({ score: { $gte: Number(query.score) } })
+  }
+  if (query.hasOwnProperty('count')) {
+    return cq.countDocuments()
+  }
+  // for pagination
+  if (query.hasOwnProperty('page')) {
+    return getPage(cq, query.page)
+  } else {
+    return getPage(cq, 1)
+  }
+}
+
+const fuzzySearch = async query => {
+  // for home page search bar
+
+  const cq = Books.find({
     $or: [
       { _id: query.all },
       { tags: { $regex: '.*' + query.all + '.*' } },
@@ -25,121 +60,64 @@ const findAll = async (query) => {
       { 'info.作者': { $regex: '.*' + query.all + '.*' } }
     ]
   })
-  if (query.hasOwnProperty('score')) {
-    queryBook.find({ score: { $gte: Number(query.score) } })
-  }
-  // 如果只是想了解 数据有多少条 (count), 那便只返回 count咯~ 在分页之前
-  if (query.hasOwnProperty('count')) {
-    return queryBook.countDocuments()
-  }
-  // 到最后 总是要分页的 我不会一口把所有资料都吐给你 哈哈哈哈
-  if (query.hasOwnProperty('page')) {
-    return getPage(queryBook, query.page)
-  } else {
-    return getPage(queryBook, 1)
-  }
+  return chainingQueriesFilter(cq, query)
 }
 
-const urlQuery = async (query) => {
-  const queryBook = Books.find({})
-  // 查tag
+const categorySearch = async query => {
+  // for detail page hyperlink
+  const cq = Books.find({})
   if (query.hasOwnProperty('tag')) {
-    // queryBook.find({ tags: query.tag })
-    queryBook.find({ tags: { $regex: '.*' + query.tag + '.*' } })
+    cq.find({ tags: { $regex: '.*' + query.tag + '.*' } })
   }
-  // 查作者, 正则挺操蛋的..
   if (query.hasOwnProperty('author')) {
-    queryBook.find({ 'info.作者': { $regex: '.*' + query.author + '.*' } })
+    cq.find({ 'info.作者': { $regex: '.*' + query.author + '.*' } })
   }
-  // 查标题
   if (query.hasOwnProperty('title')) {
-    queryBook.find({ title: { $regex: '.*' + query.title + '.*' } })
+    cq.find({ title: { $regex: '.*' + query.title + '.*' } })
   }
-  // 评分筛选
-  if (query.hasOwnProperty('score')) {
-    logger.info('Number(query.score)', Number(query.score))
-    queryBook.find({ score: { $gte: Number(query.score) } })
-  }
-  // 如果只是想了解 数据有多少条 (count), 那便只返回 count咯~ 在分页之前
-  if (query.hasOwnProperty('count')) {
-    return queryBook.countDocuments()
-  }
-  // 到最后 总是要分页的 我不会一口把所有资料都吐给你 哈哈哈哈
-  if (query.hasOwnProperty('page')) {
-    return getPage(queryBook, query.page)
-  } else {
-    return getPage(queryBook, 1)
+  return chainingQueriesFilter(cq, query)
+}
+
+// OrderedDict: e.g. all have highest priority
+const queryHandler = {
+  async all (_, query) {
+    return await fuzzySearch(query)
+  },
+  async id (_id) {
+    return await Books.findOne({ _id })
+  },
+  async intro (_id) {
+    return await BooksIntro.findOne({ _id })
+  },
+  async last (_, query) {
+    return await categorySearch(query)
   }
 }
 
-router.get('/', (req, res) => {
-  // http://127.0.0.1:3000/api/book
-  const query = req.query
-  if (objectIsEmpty(query)) {
-    const API_INFO = {
-      'msg': '请带上参数',
-      'get_book_by_id': 'http://127.0.0.1:3000/api/book?id={id}'
+router.get(
+  '/',
+  asyncHandler(async (req, res) => {
+    // No parameters
+    if (objectIsEmpty(req.query)) {
+      return res.json({
+        msg: 'No parameters',
+        get_book_by_id: 'http://127.0.0.1:3000/api/book?id={id}'
+      })
     }
-    res.json(API_INFO)
-  } else {
-    logger.info('req.query', query)
-    // all最高级
-    if (query.hasOwnProperty('all')) {
-      findAll(query)
-        .then(r => {
-          // r 是数组或数字
-          if (r) {
-            res.json(r)
-          } else {
-            res.json(null)
-          }
-        })
-      return
-    }
-    // id, 和得到此id intro 是排它性的: 既然查id 其他条件就不会生效
-    if (query.hasOwnProperty('id')) {
-      Books.find({ _id: query.id })
-        .then(r => {
-          // r 是数组
-          if (r.length) {
-            res.json(r[0])
-          } else {
-            res.json(null)
-          }
-        })
-      return
-    } else if (query.hasOwnProperty('intro')) {
-      BooksIntro.find({ _id: query.intro })
-        .then(r => {
-          // r 是数组
-          if (r.length) {
-            res.json(r[0])
-          } else {
-            res.json(null)
-          }
-        })
-      return
-    }
-    // 解析 url 的信息
-    // 这是一个很强的函数 (๑¯◡¯๑)~
-    urlQuery(query).then(r => {
-      res.json(r)
-    }).catch(err => {
-      logger.info('err', err)
-    })
-  }
-})
 
-router.post('/', (req, res) => {
-  const body = req.body
-  logger.info('body', body)
-  Books.findOne({ tags: body.content })
-    .then((result) => {
-      res.send(result)
-    })
-    .catch((err) => {
-      logger.info('err', err)
-    })
-})
+    // TODO: not found then 404
+    // execute query
+    for (const [name, handler] of Object.entries(queryHandler)) {
+      if (name === 'last') {
+        //
+        return res.json(await queryHandler.last(null, query))
+      }
+      if (req.query.hasOwnProperty(name)) {
+        const r = await handler(req.query[name], req.query)
+        return res.json(r)
+      }
+    }
+  })
+)
 
 module.exports = router
