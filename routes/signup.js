@@ -3,16 +3,10 @@ const router = express.Router()
 const User = require('../Model/User')
 
 router.post('/', async (req, res, next) => {
-  const count = await User.find({})
-    .countDocuments()
-    .exec()
-  console.log('Signup body', req.body)
-
   const u = new User({
     email: req.body.email,
     password: req.body.password,
-    name: req.body.name,
-    index: count + 1
+    name: req.body.name
   })
 
   u.save()
