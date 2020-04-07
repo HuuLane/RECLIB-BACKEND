@@ -25,7 +25,7 @@ if (env === 'production') {
     cors({
       credentials: true,
       // for vue cli
-      origin: 'http://localhost:8081'
+      origin: 'http://localhost:8080'
     })
   )
 }

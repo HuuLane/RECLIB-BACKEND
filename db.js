@@ -43,39 +43,6 @@ const BooksIntro = model('BooksIntro', 'intro', {
   intro: [String, String]
 })
 
-// user collection
-const User = model('User', 'registeredUser', {
-  email: {
-    type: String,
-    required: true,
-    unique: true
-  },
-  password: {
-    type: String,
-    required: true
-  },
-  name: {
-    type: String,
-    required: true,
-    unique: true
-  },
-  index: {
-    type: Number,
-    required: true,
-    unique: true
-  },
-  activity: {
-    type: Object,
-    rentBook: [Array],
-    comments: [Array]
-  },
-  date: {
-    type: Date,
-    // `Date.now()` returns the current unix timestamp as a number
-    default: Date.now()
-  }
-})
-
 // stock & commit collection
 const StockAndCommit = model('StockAndCommit', 'stocks', {
   _id: String,
@@ -91,6 +58,5 @@ module.exports = {
   db,
   Books,
   BooksIntro,
-  User,
   StockAndCommit
 }
