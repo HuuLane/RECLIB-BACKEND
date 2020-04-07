@@ -99,9 +99,8 @@ router.get(
   asyncHandler(async (req, res) => {
     // No parameters
     if (objectIsEmpty(req.query)) {
-      return res.json({
-        msg: 'No parameters',
-        get_book_by_id: 'http://127.0.0.1:3000/api/book?id={id}'
+      return res.status(404).json({
+        msg: 'No parameters'
       })
     }
 
@@ -109,8 +108,7 @@ router.get(
     // execute query
     for (const [name, handler] of Object.entries(queryHandler)) {
       if (name === 'last') {
-        //
-        return res.json(await queryHandler.last(null, query))
+        return res.json(await queryHandler.last(null, req.query))
       }
       if (req.query.hasOwnProperty(name)) {
         const r = await handler(req.query[name], req.query)
