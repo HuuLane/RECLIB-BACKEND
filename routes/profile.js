@@ -1,5 +1,4 @@
-const { User } = require('../db')
-// 引入路由
+const User = require('../Model/User')
 const express = require('express')
 const router = express.Router()
 
