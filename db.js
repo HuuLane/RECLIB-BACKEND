@@ -5,7 +5,8 @@ const connetDB = dbName => {
   mongoose.connect(url, {
     useNewUrlParser: true,
     useCreateIndex: true,
-    useUnifiedTopology: true
+    useUnifiedTopology: true,
+    useFindAndModify: false
   })
   const db = mongoose.connection
   db.on('error', console.error.bind(console, "MongoDB's connection is err!"))
@@ -54,9 +55,15 @@ const StockAndCommit = model('StockAndCommit', 'stocks', {
   }
 })
 
+const Counter = model('Counter', 'counter', {
+  _id: { type: String, required: true },
+  seq: { type: Number, default: 0 }
+})
+
 module.exports = {
   db,
   Books,
+  Counter,
   BooksIntro,
   StockAndCommit
 }

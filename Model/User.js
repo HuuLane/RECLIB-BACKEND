@@ -1,5 +1,6 @@
 const mongoose = require('mongoose')
 const bcrypt = require('bcrypt')
+const { Counter } = require('../db')
 const { logger } = require('../utils')
 const saltRounds = 9
 
@@ -21,7 +22,6 @@ const schema = new mongoose.Schema(
     },
     index: {
       type: Number,
-      required: true,
       unique: true
     },
     activity: {
@@ -51,6 +51,17 @@ schema.pre('save', async function (next) {
   logger.info('sign up hash', hash)
   // override the cleartext password with the hashed one
   this.password = hash
+  next()
+})
+
+schema.pre('save', async function (next) {
+  // for user index
+  const counter = await Counter.findOneAndUpdate(
+    { _id: 'forUserIndex' },
+    { $inc: { seq: 1 } },
+    { upsert: true }
+  )
+  this.index = counter.seq
   next()
 })
 
