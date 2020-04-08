@@ -5,8 +5,6 @@ const { logger } = require('../utils')
 const express = require('express')
 const router = express.Router()
 
-// session manage
-router.use(require('./session'))
 
 router.put('/', async (req, res, next) => {
   const { name, userID } = req.session
