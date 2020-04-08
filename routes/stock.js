@@ -7,9 +7,6 @@ const { log } = console
 const express = require('express')
 const router = express.Router()
 
-// session manage
-router.use(require('./session'))
-
 router.put('/', async (req, res, next) => {
   const { name, userID } = req.session
   // 没有登录
