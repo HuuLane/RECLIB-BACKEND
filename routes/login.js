@@ -13,7 +13,7 @@ router.post('/', async (req, res, next) => {
       msg: '未注册'
     })
   }
-  if (!u.comparePasswd(password)) {
+  if (!(await u.comparePasswd(password))) {
     return res.json({
       code: 0,
       msg: '密码错误'
