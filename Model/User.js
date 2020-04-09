@@ -47,9 +47,7 @@ schema.pre('save', async function (next) {
   if (!this.isModified('password')) {
     return next()
   }
-  logger.info('before sign up hash')
   const hash = await bcrypt.hash(this.password, saltRounds)
-  logger.info('sign up hash', hash)
   // override the cleartext password with the hashed one
   this.password = hash
   next()
