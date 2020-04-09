@@ -1,20 +1,16 @@
 const { logger, registerLogger } = require('./utils')
-// 奇怪的 bug
 const env = process.env.NODE_ENV
 
-const createError = require('http-errors')
 const express = require('express')
 const path = require('path')
 const cookieParser = require('cookie-parser')
-// 引入插件
-const compression = require('compression')
 const cors = require('cors')
 const history = require('connect-history-api-fallback')
 
 const app = express()
 
 if (env === 'production') {
-  app.use(compression())
+  app.use(require('compression')())
   //  HTML5 history complements Vue router mode
   app.use(history())
   registerLogger(app)
@@ -44,23 +40,9 @@ app.use('/comment', require('./routes/comment.js'))
 app.use('/stock', require('./routes/stock.js'))
 app.use('/logout', require('./routes/logout.js'))
 app.use('/profile', require('./routes/profile.js'))
-// 盗链.. 让 server 来中转.
 app.use('/images', require('./routes/images.js'))
 
-// catch 404 and forward to error handler
-app.use((req, res, next) => {
-  next(createError(404))
-})
-
-// error handler
-app.use((err, req, res, next) => {
-  // set locals, only providing error in development
-  res.locals.message = err.message
-  res.locals.error = req.app.get('env') === 'development' ? err : {}
-  // render the error page
-  res.status(err.status || 500)
-  res.redirect('/404')
-})
+app.all('*', (req, res) => res.status(404).send('NOT FOUND'))
 
 logger.info('1. Server starts to run')
 logger.info(`2. Environment: ${env}`)
