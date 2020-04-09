@@ -1,52 +1,51 @@
 const { Books, StockAndCommit } = require('../db')
 const User = require('../Model/User')
 const { logger } = require('../utils')
-// 引入路由
-const express = require('express')
-const router = express.Router()
+const router = require('express').Router()
 
-
-router.put('/', async (req, res, next) => {
-  const { name, userID } = req.session
-  // 没有登录
+router.post('/', async (req, res) => {
+  const { name, uid } = req.session
   if (!name) {
     return res.json({ code: 0, msg: '请先登录' })
   }
   // @params: _id: 书的id, content: 评论内容
   const { id: bookID, content } = req.body
-  // 取出书名
-  const theBook = await Books.findOne({
-    _id: bookID
-  })
-  if (!theBook) {
-    return res.json({ code: 4, msg: '没有此书呀, 有疑问请联系我' })
+
+  // retrive book
+  const b = await Books.findOne({ _id: bookID })
+  if (!b) {
+    return res.json({ code: 4, msg: 'no the book' })
   }
-  // 取出 title
-  const { title: bookName } = theBook
-  const date = new Date().getTime()
+
+  const date = Date.now()
   // 存贮到 document of book 的数据
   const dataOfBook = {
     name,
-    userID,
+    userID: uid,
     content,
     date
   }
   // 存贮到 document of User 的数据
   const dataOfUser = {
-    bookName,
     bookID,
     content,
-    date
+    date,
+    bookName: b.title
   }
   try {
     // !两头存数据
     await Promise.all([
-      User.updateOne({ _id: userID }, { $push: { 'activity.comments': dataOfUser } }),
-      StockAndCommit.updateOne({ _id: bookID }, { $push: { 'comments': dataOfBook } })
+      User.updateOne(
+        { _id: uid },
+        { $push: { 'activity.comments': dataOfUser } }
+      ),
+      StockAndCommit.updateOne(
+        { _id: bookID },
+        { $push: { comments: dataOfBook } }
+      )
     ])
-    res.json({ code: 1, msg: '我很确认收到了您自由的言论' })
+    res.json({ code: 1, msg: '评论成功' })
   } catch (error) {
-    log('error', error)
     res.json({ code: 5, msg: '数据库发生错误, 请联系我' })
   }
 })
