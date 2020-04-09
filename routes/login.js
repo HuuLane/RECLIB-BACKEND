@@ -4,9 +4,7 @@ const router = express.Router()
 
 router.post('/', async (req, res, next) => {
   const { email, password } = req.body
-  const u = await User.findOne({
-    email
-  })
+  const u = await User.findOne({ email })
   if (!u) {
     return res.json({
       code: 2,
@@ -19,9 +17,11 @@ router.post('/', async (req, res, next) => {
       msg: '密码错误'
     })
   }
+
   // setting session
   req.session.name = u.name
   req.session.uid = u._id.toString()
+
   res.json({ code: 1, msg: '登录成功', userName: u.name })
 })
 

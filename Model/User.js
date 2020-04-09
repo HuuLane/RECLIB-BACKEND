@@ -32,6 +32,7 @@ const schema = new mongoose.Schema(
     date: {
       type: Date,
       // `Date.now()` returns the current unix timestamp as a number
+      // Mongoose will cast the value to a native JavaScript date using the Date() constructor.
       default: Date.now()
     }
   },
