@@ -26,8 +26,7 @@ router.post('/', async (req, res, next) => {
 })
 
 router.get('/', (req, res) => {
-  const { name, uid } = req.session
-  res.json(name)
+  res.json({ userName: req.session.name })
 })
 
 module.exports = router
