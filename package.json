@@ -5,7 +5,7 @@
   "scripts": {
     "start": "export NODE_ENV=dev && nodemon ./bin/www",
     "online": "export NODE_ENV=production && node ./bin/www",
-    "test": "nodemon ./bin/www"
+    "test": "mocha"
   },
   "dependencies": {
     "await-to-js": "^2.1.1",
@@ -27,5 +27,8 @@
     "request-promise-native": "^1.0.8",
     "winston": "^3.2.1"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "expect.js": "^0.3.1",
+    "mocha": "^7.1.1"
+  }
 }

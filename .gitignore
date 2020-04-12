@@ -63,9 +63,5 @@ typings/
 #
 # my config
 #
-.wakatime-project
 /TODO.md
-/.jshintrc
 public/
-sessions/
-test.js
