@@ -17,7 +17,7 @@ router.post('/', async (req, res) => {
     if (err.code === 11000) {
       res.json({
         code: 2,
-        msg: '用户名 或者 邮箱已有人先'
+        msg: 'Username or email is existed'
       })
     } else {
       res.json({

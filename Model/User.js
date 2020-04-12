@@ -58,7 +58,8 @@ schema.pre('save', async function (next) {
   const counter = await Counter.findOneAndUpdate(
     { _id: 'forUserIndex' },
     { $inc: { seq: 1 } },
-    { upsert: true }
+    // https://stackoverflow.com/a/30396464/11487798
+    { upsert: true, new: true }
   )
   this.index = counter.seq
   next()
