@@ -33,7 +33,7 @@ app.use(express.static(path.join(__dirname, 'public')))
 app.use(require('./session'))
 
 // Router
-app.use('/signup', require('./routes/signup.js'))
+app.use('/user', require('./routes/user.js'))
 app.use('/login', require('./routes/login.js'))
 app.use('/book', require('./routes/book.js'))
 app.use('/comment', require('./routes/comment.js'))
