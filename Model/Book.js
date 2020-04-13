@@ -10,6 +10,7 @@ const schema = new mongoose.Schema(
     tags: [String],
     imgUrl: String,
     info: Object,
+    intro: [String, String],
     comments: [
       {
         type: mongoose.Schema.Types.ObjectId,
