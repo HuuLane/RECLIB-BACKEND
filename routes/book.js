@@ -2,17 +2,15 @@ const express = require('express')
 const asyncHandler = require('express-async-handler')
 const router = express.Router()
 
-const { Books, BooksIntro } = require('../db')
+const { Book } = require('../Model/Book')
 const { logger, objectIsEmpty } = require('../utils')
 
 const getPage = async (
   $,
   pageIndex,
-  perPage,
+  perPage = 10,
   specificField = '_id title info.作者 rating score'
 ) => {
-  // default result 10
-  perPage = Number(perPage) || 10
   if (pageIndex <= 0) {
     pageIndex = 1
   } else {
@@ -40,7 +38,7 @@ const chainingQueriesFilter = async (cq, query) => {
   }
   // for pagination
   if (query.hasOwnProperty('page')) {
-    return getPage(cq, query.page)
+    return getPage(cq, Number(query.page))
   } else {
     return getPage(cq, 1)
   }
@@ -49,7 +47,7 @@ const chainingQueriesFilter = async (cq, query) => {
 const fuzzySearch = async query => {
   // for home page search bar
 
-  const cq = Books.find({
+  const cq = Book.find({
     $or: [
       { _id: query.all },
       { tags: { $regex: '.*' + query.all + '.*' } },
@@ -62,7 +60,7 @@ const fuzzySearch = async query => {
 
 const categorySearch = async query => {
   // for detail page hyperlink
-  const cq = Books.find({})
+  const cq = Book.find({})
   if (query.hasOwnProperty('tag')) {
     cq.find({ tags: { $regex: '.*' + query.tag + '.*' } })
   }
@@ -81,10 +79,10 @@ const queryHandler = {
     return await fuzzySearch(query)
   },
   async id (_id) {
-    return await Books.findOne({ _id })
+    return await Book.findOne({ _id }).select('-intro')
   },
   async intro (_id) {
-    return await BooksIntro.findOne({ _id })
+    return await Book.findOne({ _id }).select('intro')
   },
   async last (_, query) {
     return await categorySearch(query)
