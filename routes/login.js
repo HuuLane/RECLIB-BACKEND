@@ -8,13 +8,13 @@ router.post('/', async (req, res, next) => {
   if (!u) {
     return res.json({
       code: 2,
-      msg: '未注册'
+      msg: 'unregistered'
     })
   }
   if (!(await u.comparePasswd(password))) {
     return res.json({
       code: 0,
-      msg: '密码错误'
+      msg: 'wrong password'
     })
   }
 
@@ -22,7 +22,7 @@ router.post('/', async (req, res, next) => {
   req.session.name = u.name
   req.session.uid = u._id.toString()
 
-  res.json({ code: 1, msg: '登录成功', userName: u.name })
+  res.json({ code: 1, msg: 'login successful', userName: u.name })
 })
 
 router.get('/', (req, res) => {
