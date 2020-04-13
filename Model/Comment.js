@@ -51,6 +51,16 @@ schema.statics.getByBookID = async function (bookID) {
     .select('comments')
 }
 
+schema.statics.getByUserID = async function (uid) {
+  return await User.findById(uid)
+    .populate({
+      path: 'activity.comments',
+      select: '-user',
+      populate: { path: 'book', select: 'title' }
+    })
+    .select('activity.comments')
+}
+
 schema.methods.edit = async function () {
   // TODO
 }
