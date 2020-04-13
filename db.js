@@ -28,21 +28,6 @@ const model = (modelName, collectionName, properties, methods = {}) => {
 }
 
 const db = connetDB('doubanBook')
-// book collection
-const Books = model('Books', 'brief', {
-  _id: String,
-  score: Number,
-  rating: Number,
-  title: String,
-  tags: Array,
-  imgUrl: String,
-  info: Object
-})
-
-const BooksIntro = model('BooksIntro', 'intro', {
-  _id: String,
-  intro: [String, String]
-})
 
 // stock & commit collection
 const StockAndCommit = model('StockAndCommit', 'stocks', {
@@ -62,8 +47,6 @@ const Counter = model('Counter', 'counter', {
 
 module.exports = {
   db,
-  Books,
   Counter,
-  BooksIntro,
   StockAndCommit
 }
