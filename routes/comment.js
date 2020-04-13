@@ -11,9 +11,7 @@ router.post('/', async (req, res) => {
   }
   const { id: bookID, content } = req.body
 
-  // retrive book
-  const b = await Books.findOne({ _id: bookID })
-  if (!b) {
+  if (!(await Books.exists({ _id: bookID }))) {
     return res.json({ code: 4, msg: 'no the book' })
   }
 
