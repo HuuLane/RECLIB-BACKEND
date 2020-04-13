@@ -1,15 +1,17 @@
 const mongoose = require('mongoose')
 const { logger } = require('../utils')
 const User = require('../Model/User')
-const BookExtra = require('../Model/BookExtra')
+const Book = require('../Model/Book')
 
 const schema = new mongoose.Schema(
   {
-    bookID: {
-      type: String
+    book: {
+      type: String,
+      ref: 'Book'
     },
-    uid: {
-      type: mongoose.Schema.Types.ObjectId
+    user: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User'
     },
     content: {
       type: String,
@@ -31,27 +33,22 @@ const schema = new mongoose.Schema(
 
 schema.pre('save', async function (next) {
   await Promise.all([
-    User.findByIdAndUpdate(this.uid, {
+    User.findByIdAndUpdate(this.user, {
       $push: { 'activity.comments': this._id }
     }),
-    BookExtra.findByIdAndUpdate(
-      this.bookID,
-      { $push: { comments: this._id } },
-      { upsert: true, new: true }
-    )
+    Book.findByIdAndUpdate(this.book, { $push: { comments: this._id } })
   ])
   next()
 })
 
 schema.statics.getByBookID = async function (bookID) {
-  const b = await BookExtra.findById(bookID)
-  if (!b) {
-    return null
-  }
-  return await this.find()
-    .where('_id')
-    .in(b.comments)
-    .exec()
+  return await Book.findById(bookID)
+    .populate({
+      path: 'comments',
+      select: '-book',
+      populate: { path: 'user', select: 'name' }
+    })
+    .select('comments')
 }
 
 schema.methods.edit = async function () {

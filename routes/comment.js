@@ -1,4 +1,4 @@
-const { Books } = require('../db')
+const Book = require('../Model/Book')
 const Comment = require('../Model/Comment')
 
 const { logger } = require('../utils')
@@ -11,14 +11,14 @@ router.post('/', async (req, res) => {
   }
   const { id: bookID, content } = req.body
 
-  if (!(await Books.exists({ _id: bookID }))) {
+  if (!(await Book.exists({ _id: bookID }))) {
     return res.json({ code: 4, msg: 'no the book' })
   }
 
   try {
     const c = new Comment({
-      uid,
-      bookID,
+      user: uid,
+      book: bookID,
       content
     })
     await c.save()
@@ -37,7 +37,7 @@ router.get('/:bookID', async (req, res) => {
   }
   const r = await Comment.getByBookID(_id)
   if (r) {
-    res.json({ code: 1, msg: 'Get comments successful', comments: r })
+    res.json({ code: 1, msg: 'Get comments successful', comments: r.comments })
   } else {
     res.json({ code: 0, msg: 'No comments' })
   }
