@@ -25,9 +25,18 @@ const schema = new mongoose.Schema(
       unique: true
     },
     activity: {
-      type: Object,
-      rentBook: [Array],
-      comments: [Array]
+      rentedBook: [
+        {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: 'Loanout'
+        }
+      ],
+      comments: [
+        {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: 'Comment'
+        }
+      ]
     },
     date: {
       type: Date,
