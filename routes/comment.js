@@ -29,17 +29,20 @@ router.post('/', async (req, res) => {
   }
 })
 
-router.get('/:bookID', async (req, res) => {
-  // TODO get all of comments of a user
-  const _id = req.params.bookID
-  if (!_id) {
-    return res.json({ code: 2, msg: 'No parameters' })
-  }
-  const r = await Comment.getByBookID(_id)
-  if (r) {
+router.get('/', async (req, res) => {
+  const { book, user } = req.query
+  if (book) {
+    const r = await Comment.getByBookID(book)
     res.json({ code: 1, msg: 'Get comments successful', comments: r.comments })
+  } else if (user) {
+    const r = await Comment.getByUserID(user)
+    res.json({
+      code: 1,
+      msg: 'Get comments successful',
+      comments: r.activity.comments
+    })
   } else {
-    res.json({ code: 0, msg: 'No comments' })
+    return res.json({ code: 2, msg: 'No parameters' })
   }
 })
 
