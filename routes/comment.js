@@ -15,18 +15,19 @@ router.post('/', async (req, res) => {
     return res.json({ code: 4, msg: 'no the book' })
   }
 
-  try {
-    const c = new Comment({
-      user: uid,
-      book: bookID,
-      content
+  new Comment({
+    user: uid,
+    book: bookID,
+    content
+  })
+    .save()
+    .then(() => {
+      res.json({ code: 1, msg: 'Comment successful' })
     })
-    await c.save()
-    res.json({ code: 1, msg: 'Comment successful' })
-  } catch (error) {
-    logger.error('comment', error)
-    res.json({ code: 5, msg: 'An error occurred in the database' })
-  }
+    .catch(error => {
+      logger.error('comment', error)
+      res.json({ code: 5, msg: 'An error occurred in the database' })
+    })
 })
 
 router.get('/', async (req, res) => {
