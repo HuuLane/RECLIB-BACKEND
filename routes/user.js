@@ -22,7 +22,7 @@ router.post('/', async (req, res) => {
     } else {
       res.json({
         code: 0,
-        msg: 'Fail to sign up'
+        msg: 'Web Server have problems'
       })
       logger.error('Fail to signup', err)
     }
