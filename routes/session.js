@@ -2,6 +2,10 @@ const User = require('../Model/User')
 const express = require('express')
 const router = express.Router()
 
+router.get('/', (req, res) => {
+  res.json({ userName: req.session.name })
+})
+
 router.post('/', async (req, res, next) => {
   const { email, password } = req.body
   const u = await User.findOne({ email })
@@ -25,8 +29,18 @@ router.post('/', async (req, res, next) => {
   res.json({ code: 1, msg: 'Login successful', userName: u.name })
 })
 
-router.get('/', (req, res) => {
-  res.json({ userName: req.session.name })
+router.delete('/', async (req, res) => {
+  const { name } = req.session
+  if (!name) {
+    return res.json({ code: 0, msg: 'No login' })
+  }
+  req.session.destroy(err => {
+    if (err) {
+      return res.json({ code: 0, msg: 'Logout failed, server have problem' })
+    }
+    // res.clearCookie('sid')
+    res.json({ code: 1, msg: 'successfully' })
+  })
 })
 
 module.exports = router
