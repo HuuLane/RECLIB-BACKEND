@@ -34,11 +34,10 @@ app.use(require('./session'))
 
 // Router
 app.use('/user', require('./routes/user.js'))
-app.use('/login', require('./routes/login.js'))
+app.use('/session', require('./routes/session.js'))
 app.use('/book', require('./routes/book.js'))
 app.use('/comment', require('./routes/comment.js'))
 app.use('/stock', require('./routes/stock.js'))
-app.use('/logout', require('./routes/logout.js'))
 app.use('/images', require('./routes/images.js'))
 
 app.all('*', (req, res) => res.status(404).send('NOT FOUND'))
