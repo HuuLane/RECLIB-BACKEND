@@ -4,6 +4,26 @@ const User = require('../Model/User')
 const { logger } = require('../utils')
 const to = require('await-to-js').default
 
+router.get('/', async (req, res) => {
+  const { uid } = req.session
+  if (!uid) {
+    return res.json({ code: 0, msg: 'please login first' })
+  }
+  const [err, data] = await to(
+    User.findById(uid).populate({
+      path: 'activity.comments',
+      select: 'date content book',
+      populate: { path: 'book', select: 'title' }
+    })
+  )
+  if (data) {
+    res.json({ code: 1, msg: 'Successfully read user data', data })
+  } else {
+    res.json({ code: 3, msg: 'No such user' })
+    logger.error(err)
+  }
+})
+
 router.post('/', async (req, res) => {
   const u = new User({
     email: req.body.email,

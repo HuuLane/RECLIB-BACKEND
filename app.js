@@ -39,7 +39,6 @@ app.use('/book', require('./routes/book.js'))
 app.use('/comment', require('./routes/comment.js'))
 app.use('/stock', require('./routes/stock.js'))
 app.use('/logout', require('./routes/logout.js'))
-app.use('/profile', require('./routes/profile.js'))
 app.use('/images', require('./routes/images.js'))
 
 app.all('*', (req, res) => res.status(404).send('NOT FOUND'))
