@@ -16,11 +16,7 @@ const schema = new mongoose.Schema(
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Comment'
       }
-    ],
-    stock: {
-      total: Number,
-      loanout: [mongoose.Schema.Types.ObjectId]
-    }
+    ]
   },
   {
     versionKey: false

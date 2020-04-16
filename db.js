@@ -29,17 +29,6 @@ const model = (modelName, collectionName, properties, methods = {}) => {
 
 const db = connetDB('doubanBook')
 
-// stock & commit collection
-const StockAndCommit = model('StockAndCommit', 'stocks', {
-  _id: String,
-  stock: {
-    type: Object
-  },
-  comments: {
-    type: Array
-  }
-})
-
 const Counter = model('Counter', 'counter', {
   _id: { type: String, required: true },
   seq: { type: Number, default: 0 }
@@ -47,6 +36,5 @@ const Counter = model('Counter', 'counter', {
 
 module.exports = {
   db,
-  Counter,
-  StockAndCommit
+  Counter
 }
