@@ -25,12 +25,6 @@ const schema = new mongoose.Schema(
       unique: true
     },
     activity: {
-      rentedBook: [
-        {
-          type: mongoose.Schema.Types.ObjectId,
-          ref: 'Loanout'
-        }
-      ],
       comments: [
         {
           type: mongoose.Schema.Types.ObjectId,
