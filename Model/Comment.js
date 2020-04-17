@@ -21,6 +21,10 @@ const schema = new mongoose.Schema(
       type: Boolean,
       default: false
     },
+    deleted: {
+      type: Boolean,
+      default: false
+    },
     date: {
       type: Date,
       default: Date.now()
@@ -32,6 +36,9 @@ const schema = new mongoose.Schema(
 )
 
 schema.pre('save', async function (next) {
+  if (!this.isNew) {
+    return next()
+  }
   await Promise.all([
     User.findByIdAndUpdate(this.user, {
       $push: { 'activity.comments': this._id }
