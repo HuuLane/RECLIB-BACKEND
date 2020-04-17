@@ -40,7 +40,7 @@ router.get('/', async (req, res) => {
     res.json({
       code: 1,
       msg: 'Get comments successful',
-      comments: r.activity.comments
+      comments: r.comments
     })
   } else {
     return res.json({ code: 2, msg: 'No parameters' })
