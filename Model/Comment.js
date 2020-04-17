@@ -41,7 +41,7 @@ schema.pre('save', async function (next) {
   }
   await Promise.all([
     User.findByIdAndUpdate(this.user, {
-      $push: { 'activity.comments': this._id }
+      $push: { comments: this._id }
     }),
     Book.findByIdAndUpdate(this.book, { $push: { comments: this._id } })
   ])
@@ -61,11 +61,11 @@ schema.statics.getByBookID = async function (bookID) {
 schema.statics.getByUserID = async function (uid) {
   return await User.findById(uid)
     .populate({
-      path: 'activity.comments',
+      path: 'comments',
       select: '-user',
       populate: { path: 'book', select: 'title' }
     })
-    .select('activity.comments')
+    .select('comments')
 }
 
 schema.methods.edit = async function () {

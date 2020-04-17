@@ -9,13 +9,7 @@ router.get('/', async (req, res) => {
   if (!uid) {
     return res.json({ code: 0, msg: 'please login first' })
   }
-  const [err, data] = await to(
-    User.findById(uid).populate({
-      path: 'activity.comments',
-      select: 'date content book',
-      populate: { path: 'book', select: 'title' }
-    })
-  )
+  const [err, data] = await to(User.findById(uid).select('-comments'))
   if (data) {
     res.json({ code: 1, msg: 'Successfully read user data', data })
   } else {

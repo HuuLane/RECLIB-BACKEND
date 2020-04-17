@@ -24,14 +24,12 @@ const schema = new mongoose.Schema(
       type: Number,
       unique: true
     },
-    activity: {
-      comments: [
-        {
-          type: mongoose.Schema.Types.ObjectId,
-          ref: 'Comment'
-        }
-      ]
-    },
+    comments: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Comment'
+      }
+    ],
     date: {
       type: Date,
       // `Date.now()` returns the current unix timestamp as a number
