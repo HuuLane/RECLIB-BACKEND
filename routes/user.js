@@ -4,12 +4,13 @@ const User = require('../Model/User')
 const { logger } = require('../utils')
 const to = require('await-to-js').default
 
-router.get('/', async (req, res) => {
-  const { uid } = req.session
-  if (!uid) {
-    return res.json({ code: 0, msg: 'please login first' })
-  }
-  const [err, data] = await to(User.findById(uid).select('-comments'))
+router.get('/:name', async (req, res) => {
+  const { name } = req.params
+  const [err, data] = await to(
+    User.findOne({
+      name
+    }).select('-comments -password')
+  )
   if (data) {
     res.json({ code: 1, msg: 'Successfully read user data', data })
   } else {

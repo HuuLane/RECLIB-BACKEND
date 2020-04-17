@@ -79,7 +79,7 @@ const queryHandler = {
     return await fuzzySearch(query)
   },
   async id (_id) {
-    return await Book.findOne({ _id }).select('-intro')
+    return await Book.findOne({ _id }).select('-intro -comments')
   },
   async intro (_id) {
     return await Book.findOne({ _id }).select('intro')
