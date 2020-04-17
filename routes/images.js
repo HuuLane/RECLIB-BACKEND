@@ -1,39 +1,29 @@
 const express = require('express')
 const router = express.Router()
-const rp = require('request-promise-native')
-const { log } = console
+const axios = require('axios').default
+const { logger } = require('../utils')
 
-const imgBaseLink = 'https://img3.doubanio.com/view/subject/l/public/'
-
-/*
- * 盗链:
- * 用服务器请求图片(http头 referer 是空的)
- * 浏览器可以直接打开图片完整的 url
- * 说明 nginx 可能对图片设置了 valid_referers none 等等
- * 所以可以下载内容
- * 内容再发给 client
- */
+const baseLink = 'https://img3.doubanio.com/view/subject/l/public/'
+const send = {
+  method: 'GET',
+  responseType: 'arraybuffer',
+  headers: {
+    'User-Agent':
+      'Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/38.0.2125.111 Safari/537.36'
+  }
+}
 
 router.get('/:imgID', async (req, res) => {
-    const imgID = req.params.imgID
-
-    // log('imgID', imgID)
-    const imgReq = {
-        url: imgBaseLink + imgID,
-        method: 'GET',
-        encoding: null,
-        headers: {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/38.0.2125.111 Safari/537.36'
-        },
-    }
-    
-    try {
-        const body = await rp(imgReq)
-        res.set('Content-Type', 'image/png');
-        res.send(body);
-    } catch (error) {
-        res.status(404)        
-    }
+  const i = req.params.imgID
+  send.url = baseLink + i
+  try {
+    const { data } = await axios(send)
+    res.set('Content-Type', 'image')
+    res.send(data)
+  } catch (error) {
+    logger.error(error)
+    res.status(500).send('Some error occur')
+  }
 })
 
 module.exports = router
