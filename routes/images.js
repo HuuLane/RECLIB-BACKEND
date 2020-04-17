@@ -17,9 +17,13 @@ router.get('/:imgID', async (req, res) => {
   const i = req.params.imgID
   send.url = baseLink + i
   try {
-    const { data } = await axios(send)
-    res.set('Content-Type', 'image')
-    res.send(data)
+    const r = await axios(send)
+    if (r.status === 200) {
+      res.set('Content-Type', 'image')
+      res.send(r.data)
+    } else {
+      res.status(404).send('No the image')
+    }
   } catch (error) {
     logger.error(error)
     res.status(500).send('Some error occur')
