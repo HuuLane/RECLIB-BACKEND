@@ -53,6 +53,7 @@ schema.statics.getByBookID = async function (bookID) {
     .populate({
       path: 'comments',
       select: '-book',
+      match: { deleted: false },
       populate: { path: 'user', select: 'name' }
     })
     .select('comments')
@@ -63,6 +64,7 @@ schema.statics.getByUserID = async function (uid) {
     .populate({
       path: 'comments',
       select: '-user',
+      match: { deleted: false },
       populate: { path: 'book', select: 'title' }
     })
     .select('comments')

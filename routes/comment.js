@@ -67,6 +67,8 @@ router.put('/:id', async (req, res) => {
 
   c.edited = true
   c.content = content
+  // TODO Using updateOne
+  // https://masteringjs.io/tutorials/mongoose/update
   c.save()
     .then(() => {
       res.json({ code: 1, msg: 'edit the comment successfully' })
@@ -78,8 +80,8 @@ router.put('/:id', async (req, res) => {
 })
 
 router.delete('/:id', async (req, res) => {
+  const id = req.params.id
   const { name, uid } = req.session
-
   const c = await Comment.findById(id)
 
   if (!c) {
