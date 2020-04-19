@@ -20,7 +20,7 @@ module.exports = session({
   cookie: { secure: false },
   store: new redisStore({
     client: redisClient,
-    host: 'localhost',
+    host: process.env.REDIS_HOST || 'localhost',
     port: 6379,
     ttl: 86400
   })

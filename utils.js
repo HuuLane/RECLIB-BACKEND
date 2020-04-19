@@ -16,8 +16,7 @@ const logger = createLogger({
       zippedArchive: true,
       maxSize: '20m',
       maxFiles: '14d',
-      level: 'info'
-      // level: process.env.ENV === 'production' ? 'info' : 'debug'
+      level: process.env.NODE_ENV === 'production' ? 'info' : 'debug'
     })
   ]
 })

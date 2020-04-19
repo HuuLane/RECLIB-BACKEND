@@ -1,7 +1,8 @@
 const mongoose = require('mongoose')
 const { logger } = require('./utils')
 const connetDB = dbName => {
-  const url = `mongodb://localhost:27017/${dbName}`
+  const url = `mongodb://${process.env.MONGO_HOST ||
+    'localhost'}:27017/${dbName}`
   mongoose.connect(url, {
     useNewUrlParser: true,
     useCreateIndex: true,
