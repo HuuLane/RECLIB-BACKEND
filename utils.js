@@ -1,27 +1,39 @@
-const winston = require('winston')
-const expressWinston = require('express-winston')
+const { createLogger, transports, format } = require('winston')
+require('winston-daily-rotate-file')
 
-const logger = winston.createLogger({
-  transports: [new winston.transports.Console()]
+// transport.on('rotate', (oldFilename, newFilename) => {})
+
+const logger = createLogger({
+  format: format.combine(
+    format.timestamp(),
+    format.simple()
+    //
+  ),
+  transports: [
+    new transports.DailyRotateFile({
+      filename: './logs/application-%DATE%.log',
+      datePattern: 'YYYY-MM-DD',
+      zippedArchive: true,
+      maxSize: '20m',
+      maxFiles: '14d',
+      level: 'info'
+      // level: process.env.ENV === 'production' ? 'info' : 'debug'
+    })
+  ]
 })
 
 const registerLogger = app => {
-  app.use(
-    expressWinston.logger({
-      transports: [new winston.transports.Console()],
-      format: winston.format.combine(
-        winston.format.colorize(),
-        winston.format.json()
-      ),
-      // meta: true, // optional: control whether you want to log the meta data about the request (default to true)
-      // msg: 'HTTP {{res.statusCode}} {{req.method}} {{res.responseTime}}ms {{req.url}}', // optional: customize the default logging message. E.g. "{{res.statusCode}} {{req.method}} {{res.responseTime}}ms {{req.url}}"
-      expressFormat: true, // Use the default Express/morgan request formatting. Enabling this will override any msg if true. Will only output colors with colorize set to true
-      colorize: true, // Color the text and status code, using the Express/morgan color palette (text: gray, status: default green, 3XX cyan, 4XX yellow, 5XX red).
-      ignoreRoute: function (req, res) {
-        return false
-      } // optional: allows to skip some log messages based on request and/or response
-    })
+  const fs = require('fs')
+  const morgan = require('morgan')
+  const path = require('path')
+  // create a write stream (in append mode)
+  const accessLogStream = fs.createWriteStream(
+    path.join(__dirname, 'logs/access.log'),
+    { flags: 'a' }
   )
+
+  // setup the logger
+  app.use(morgan('combined', { stream: accessLogStream }))
 }
 
 const objectIsEmpty = obj => {

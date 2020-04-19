@@ -1,16 +1,22 @@
 const mongoose = require('mongoose')
-
+const { logger } = require('./utils')
 const connetDB = dbName => {
   const url = `mongodb://localhost:27017/${dbName}`
   mongoose.connect(url, {
     useNewUrlParser: true,
     useCreateIndex: true,
     useUnifiedTopology: true,
-    useFindAndModify: false
+    useFindAndModify: false,
+    auto_reconnect: true
   })
   const db = mongoose.connection
-  db.on('error', console.error.bind(console, "MongoDB's connection is err!"))
-  db.once('open', console.log.bind(console, 'MongoDB is connected!'))
+  db.on('error', error => {
+    logger.error('Error in MongoDb connection: ', error)
+    mongoose.disconnect()
+  })
+  db.on('connected', function () {
+    logger.info('MongoDB connected!')
+  })
   return db
 }
 

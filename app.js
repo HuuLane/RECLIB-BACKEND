@@ -43,5 +43,5 @@ app.all('*', (req, res) => res.status(404).send('NOT FOUND'))
 
 logger.info('1. Server starts to run')
 logger.info(`2. Environment: ${env}`)
-logger.info(`3. IP: http://127.0.0.1:3000`)
+logger.debug(`3. IP: http://127.0.0.1:3000`)
 module.exports = app
