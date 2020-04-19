@@ -46,6 +46,7 @@ router.post('/', async (req, res) => {
     req.session.uid = data._id.toString()
     res.json({
       code: 1,
+      userName: data.name,
       msg: 'Create account successfully'
     })
   }

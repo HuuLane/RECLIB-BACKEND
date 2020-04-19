@@ -1,5 +1,4 @@
 const express = require('express')
-const asyncHandler = require('express-async-handler')
 const router = express.Router()
 
 const Book = require('../Model/Book')
@@ -89,18 +88,17 @@ const queryHandler = {
   }
 }
 
-router.get(
-  '/',
-  asyncHandler(async (req, res) => {
-    // No parameters
-    if (objectIsEmpty(req.query)) {
-      return res.status(404).json({
-        msg: 'No parameters'
-      })
-    }
+router.get('/', async (req, res) => {
+  // No parameters
+  if (objectIsEmpty(req.query)) {
+    return res.status(404).json({
+      msg: 'No parameters'
+    })
+  }
 
-    // TODO: not found then 404
-    // execute query
+  // TODO: not found then 404
+  // execute query
+  try {
     for (const [name, handler] of Object.entries(queryHandler)) {
       if (name === 'last') {
         return res.json(await queryHandler.last(null, req.query))
@@ -110,7 +108,11 @@ router.get(
         return res.json(r)
       }
     }
-  })
-)
+  } catch (error) {
+    res.status(500).json({
+      msg: 'Internal Server Error'
+    })
+  }
+})
 
 module.exports = router
