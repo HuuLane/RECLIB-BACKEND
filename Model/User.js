@@ -1,5 +1,5 @@
 const mongoose = require('mongoose')
-const bcrypt = require('bcrypt')
+const bcrypt = require('bcryptjs')
 const { Counter } = require('../db')
 const { logger } = require('../utils')
 const saltRounds = 9
@@ -45,14 +45,39 @@ const schema = new mongoose.Schema(
 
 schema.pre('save', async function (next) {
   // only hash the password if it has been modified (or is new)
-  if (!this.isModified('password')) {
+  const doc = this
+  if (!doc.isModified('password')) {
     return next()
   }
-  const hash = await bcrypt.hash(this.password, saltRounds)
-  // override the cleartext password with the hashed one
-  this.password = hash
-  next()
+  return new Promise((res, rej) => {
+    bcrypt.genSalt(9, function (err, salt) {
+      bcrypt.hash(doc.password, salt, function (err, hash) {
+        if (err) {
+          logger.error(err)
+          rej(err)
+        }
+        console.log(hash)
+        // override the cleartext password with the hashed one
+        doc.password = hash
+        res(next())
+      })
+    })
+  })
 })
+
+schema.methods.comparePasswd = async function (candidatePassword) {
+  const doc = this
+  return new Promise((resolve, reject) => {
+    bcrypt.compare(candidatePassword, doc.password, function (err, res) {
+      // res === true
+      if (err) {
+        reject(err)
+      } else {
+        resolve(res)
+      }
+    })
+  })
+}
 
 schema.pre('save', async function (next) {
   // for user index
@@ -65,9 +90,5 @@ schema.pre('save', async function (next) {
   this.index = counter.seq
   next()
 })
-
-schema.methods.comparePasswd = async function (candidatePassword) {
-  return bcrypt.compare(candidatePassword, this.password)
-}
 
 module.exports = mongoose.model('User', schema, 'user')
