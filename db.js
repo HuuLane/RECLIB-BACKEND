@@ -1,8 +1,14 @@
 const mongoose = require('mongoose')
+const env = require('env-var')
 const { logger } = require('./utils')
+
 const connetDB = dbName => {
-  const url = `mongodb://${process.env.MONGO_HOST ||
-    'localhost'}:27017/${dbName}`
+  const HOST = env
+    .get('MONGO_HOST')
+    .default('localhost')
+    .asString()
+  const url = `mongodb://${HOST}:27017/${dbName}`
+
   mongoose.connect(url, {
     useNewUrlParser: true,
     useCreateIndex: true,

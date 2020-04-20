@@ -1,6 +1,13 @@
 const session = require('express-session')
 const redis = require('redis')
-const redisClient = redis.createClient()
+const env = require('env-var')
+
+const HOST = env
+  .get('REDIS_HOST')
+  .default('localhost')
+  .asString()
+
+const redisClient = redis.createClient(`redis://${HOST}`)
 const redisStore = require('connect-redis')(session)
 
 redisClient.on('error', err => {
@@ -20,7 +27,6 @@ module.exports = session({
   cookie: { secure: false },
   store: new redisStore({
     client: redisClient,
-    host: process.env.REDIS_HOST || 'localhost',
     port: 6379,
     ttl: 86400
   })
