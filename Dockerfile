@@ -5,7 +5,8 @@ WORKDIR /app
 COPY package.json .
 
 # China is special
-RUN npm config set registry https://registry.npm.taobao.org
+# RUN npm config set registry https://registry.npm.taobao.org
+
 RUN npm cache verify
 RUN npm install
 
