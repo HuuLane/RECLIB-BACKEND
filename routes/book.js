@@ -1,7 +1,7 @@
 const express = require('express')
 const router = express.Router()
 
-const Book = require('../Model/Book')
+const Book = require('../model/Book')
 const { logger, objectIsEmpty } = require('../utils')
 
 const getPage = async (

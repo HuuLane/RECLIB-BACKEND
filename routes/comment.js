@@ -1,5 +1,5 @@
-const Book = require('../Model/Book')
-const Comment = require('../Model/Comment')
+const Book = require('../model/Book')
+const Comment = require('../model/Comment')
 
 const { logger } = require('../utils')
 const router = require('express').Router()

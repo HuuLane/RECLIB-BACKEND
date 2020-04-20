@@ -1,7 +1,7 @@
 const mongoose = require('mongoose')
 const { logger } = require('../utils')
-const User = require('../Model/User')
-const Book = require('../Model/Book')
+const User = require('../model/User')
+const Book = require('../model/Book')
 
 const schema = new mongoose.Schema(
   {
