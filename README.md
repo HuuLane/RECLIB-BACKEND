@@ -2,15 +2,20 @@
 
 > A Web app, simple but not crude, dedicated to learning programming in practice.
 
-[![LICENSE]][license]
+<!-- [![LICENSE]][license]
 [![ISSUES]][issues]
 [![RELESE]][relese]
 [![downloads]][downloads]
-[![build]][build]
+[![build]][build] -->
 
 <p align="center">
-  <img src="./static/IMG_HOME.jpg">
+    <img src="./static/IMG_HOME.jpg">
 </p>
+
+## Resources
+
+- [Online sample][sample]
+- [RECLIB front-end](https://github.com/HuuLane/RECLIB)
 
 ## Run
 
@@ -42,3 +47,4 @@ $ docker-compose up -d
 [relese]: https://img.shields.io/github/v/tag/HuuLane/RECLIB-BACKEND?style=flat-square
 [downloads]: https://img.shields.io/github/downloads/HuuLane/RECLIB-BACKEND/total
 [build]: https://img.shields.io/github/workflow/status/HuuLane/RECLIB-BACKEND/Docker
+[sample]: http://lab.typeof.fun:3000
