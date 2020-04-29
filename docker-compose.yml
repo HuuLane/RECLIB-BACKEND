@@ -5,8 +5,8 @@ services:
     restart: unless-stopped
     command: npm run online
     volumes:
-      - .:/app
-      - reclib_dep:/app/node_modules
+      - ./logs:/app/logs
+      - /app/node_modules
     ports:
       - '3000:3000'
     environment:
