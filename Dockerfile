@@ -1,4 +1,4 @@
-FROM docker.pkg.github.com/huulane/reclib/image:latest as ui-build
+FROM huulane/reclib-ui as ui-build
 
 FROM node:alpine
 WORKDIR /app

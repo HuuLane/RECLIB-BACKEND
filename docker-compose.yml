@@ -1,14 +1,14 @@
-version: "3"
+version: '3'
 services:
   app:
-    image: docker.pkg.github.com/huulane/reclib-backend/reclib-server:latest
+    image: huulane/reclib
     restart: unless-stopped
     command: npm run online
     volumes:
       - .:/app
-      - /app/node_modules
+      - reclib_dep:/app/node_modules
     ports:
-      - "3000:3000"
+      - '3000:3000'
     environment:
       - REDIS_HOST=redis
       - MONGO_HOST=mongo
