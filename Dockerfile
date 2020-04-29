@@ -2,7 +2,7 @@ FROM huulane/reclib-ui as ui-build
 
 FROM node:alpine
 WORKDIR /app
-COPY package*.json .
+COPY package*.json ./
 
 # China is special
 # RUN npm config set registry https://registry.npm.taobao.org
