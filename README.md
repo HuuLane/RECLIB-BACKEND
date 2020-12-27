@@ -2,7 +2,7 @@
 
 ![Publish Docker](https://github.com/HuuLane/RECLIB-BACKEND/workflows/Publish%20Docker/badge.svg?branch=master)
 
-> A Web app, simple but not crude, dedicated to learning programming in practice. 
+> For learning by doing, I have built a Web app, which simple but not crude.
 
 <!-- [![LICENSE]][license] [![ISSUES]][issues] [![RELESE]][relese] [![downloads]][downloads] [![build]][build] -->
 
