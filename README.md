@@ -1,6 +1,6 @@
 # RECLIB
 
-![Publish Docker](https://github.com/HuuLane/RECLIB-BACKEND/workflows/Publish%20Docker/badge.svg?branch=master)
+![Publish Docker](https://github.com/HuuLane/RECLIB-BACKEND/workflows/Publish%20Docker/badge.svg?branch=master) [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
 
 > A Web app, simple but not crude, dedicated to learning programming in practice. 
 
