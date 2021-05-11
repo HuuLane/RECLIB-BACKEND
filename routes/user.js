@@ -1,7 +1,7 @@
 const express = require('express')
 const router = express.Router()
 const User = require('../model/User')
-const { logger } = require('../utils')
+const { logger } = require('../logger')
 const to = require('await-to-js').default
 
 router.get('/:name', async (req, res) => {

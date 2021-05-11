@@ -3,8 +3,8 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "export NODE_ENV=dev && nodemon ./bin/www",
-    "online": "export NODE_ENV=production && node ./bin/www",
+    "start": "export NODE_ENV=DEV && nodemon ./bin/www | ./node_modules/pino-pretty/bin.js -t",
+    "online": "export NODE_ENV=PROD && node ./bin/www",
     "test": "mocha --exit"
   },
   "dependencies": {
@@ -20,14 +20,14 @@
     "express": "4.17.1",
     "express-session": "1.17.1",
     "mongoose": "5.9.10",
-    "morgan": "1.9.1",
-    "redis": "3.0.2",
-    "winston": "3.2.1",
-    "winston-daily-rotate-file": "4.4.2"
+    "pino": "^6.11.3",
+    "pino-http": "^5.5.0",
+    "redis": "3.0.2"
   },
   "devDependencies": {
     "expect.js": "0.3.1",
     "mocha": "7.1.1",
+    "pino-pretty": "^4.7.1",
     "supertest": "4.0.2"
   }
 }

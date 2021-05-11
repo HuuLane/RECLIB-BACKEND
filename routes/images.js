@@ -1,7 +1,7 @@
 const express = require('express')
 const router = express.Router()
 const axios = require('axios').default
-const { logger } = require('../utils')
+const { logger } = require('../logger')
 
 const baseLink = 'https://img3.doubanio.com/view/subject/l/public/'
 const send = {

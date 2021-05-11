@@ -1,7 +1,7 @@
 const Book = require('../model/Book')
 const Comment = require('../model/Comment')
 
-const { logger } = require('../utils')
+const { logger } = require('../logger')
 const router = require('express').Router()
 
 router.post('/', async (req, res) => {

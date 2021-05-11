@@ -1,6 +1,6 @@
 const mongoose = require('mongoose')
 const env = require('env-var')
-const { logger } = require('./utils')
+const { logger } = require('./logger')
 
 const connetDB = dbName => {
   const HOST = env

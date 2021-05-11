@@ -1,4 +1,4 @@
-const { logger, registerLogger } = require('./utils')
+const { logger, registerLogger } = require('./logger')
 const express = require('express')
 const path = require('path')
 const cookieParser = require('cookie-parser')
@@ -6,15 +6,13 @@ const cors = require('cors')
 const history = require('connect-history-api-fallback')
 
 const app = express()
+registerLogger(app)
 
-if (app.get('env') === 'production') {
+if (app.get('env') === 'PROD') {
   app.use(require('compression')())
   //  HTML5 history complements Vue router mode
   app.use(history())
-  registerLogger(app)
 } else {
-  logger.info("LET'S DEV")
-  app.use(require('morgan')('dev'))
   app.use(
     cors({
       credentials: true,
@@ -39,7 +37,6 @@ app.use('/images', require('./routes/images.js'))
 
 app.all('*', (req, res) => res.status(404).send('NOT FOUND'))
 
-logger.info('1. Server starts to run')
-logger.info(`2. Environment: ${app.get('env')}`)
-logger.debug(`3. IP: http://127.0.0.1:3000`)
+logger.info('Server starts to run')
+logger.info(`Environment: ${app.get('env')}`)
 module.exports = app
