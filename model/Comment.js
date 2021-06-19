@@ -1,5 +1,5 @@
 const mongoose = require('mongoose')
-const { logger } = require('../utils')
+const { logger } = require('../logger')
 const User = require('../model/User')
 const Book = require('../model/Book')
 

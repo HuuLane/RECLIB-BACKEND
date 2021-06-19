@@ -1,8 +1,8 @@
 const mongoose = require('mongoose')
 const bcrypt = require('bcryptjs')
 const { Counter } = require('../db')
-const { logger } = require('../utils')
-const saltRounds = 9
+const { logger } = require('../logger')
+const SaltRounds = 9
 
 const schema = new mongoose.Schema(
   {
@@ -50,13 +50,13 @@ schema.pre('save', async function (next) {
     return next()
   }
   return new Promise((res, rej) => {
-    bcrypt.genSalt(9, function (err, salt) {
+    bcrypt.genSalt(SaltRounds, function (err, salt) {
       bcrypt.hash(doc.password, salt, function (err, hash) {
         if (err) {
           logger.error(err)
           rej(err)
         }
-        console.log(hash)
+        logger.info(`calculate hash for ${doc.name}, done`)
         // override the cleartext password with the hashed one
         doc.password = hash
         res(next())
