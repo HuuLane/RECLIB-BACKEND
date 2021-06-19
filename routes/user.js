@@ -52,4 +52,47 @@ router.post('/', async (req, res) => {
   }
 })
 
+// auto create
+// guest & admin account
+;(async () => {
+  const [err, data] = await to(
+    User.findOne({
+      name: 'guest'
+    })
+  )
+  if (err) {
+    logger.error(err)
+    return
+  }
+  if (!data) {
+    const u = new User({
+      email: 'guest@typeof.fun',
+      password: 'guest@typeof.fun',
+      name: 'guest'
+    })
+    u.save()
+    logger.info('create guest')
+  }
+})()
+;(async () => {
+  const [err, data] = await to(
+    User.findOne({
+      name: 'admin'
+    })
+  )
+  if (err) {
+    logger.error(err)
+    return
+  }
+  if (!data) {
+    const u = new User({
+      email: 'admin@typeof.fun',
+      password: 'admin@typeof.fun',
+      name: 'admin'
+    })
+    u.save()
+    logger.info('create admin')
+  }
+})()
+
 module.exports = router
