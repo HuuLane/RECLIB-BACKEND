@@ -1,5 +1,6 @@
 const express = require('express')
 const router = express.Router()
+const to = require('await-to-js').default
 
 const Book = require('../model/Book')
 const { logger, objectIsEmpty } = require('../utils')
@@ -111,6 +112,40 @@ router.get('/', async (req, res) => {
   } catch (error) {
     res.status(500).json({
       msg: 'Internal Server Error'
+    })
+  }
+})
+
+router.post('/', async (req, res) => {
+  console.log(req.body)
+  if (!req.body._id) {
+    res.json({
+      code: 1,
+      msg: 'Book(ISBN) needed'
+    })
+  }
+  // todo: field check
+  const b = new Book(req.body)
+
+  const [err, data] = await to(b.save())
+
+  if (err) {
+    if (err.code === 11000) {
+      res.json({
+        code: 1,
+        msg: 'Book(ISBN) is existed'
+      })
+    } else {
+      res.json({
+        code: 2,
+        msg: 'Web Server have problems'
+      })
+      logger.error('Fail to signup', err)
+    }
+  } else {
+    res.json({
+      code: 0,
+      msg: 'Create book successfully'
     })
   }
 })
