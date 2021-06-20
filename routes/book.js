@@ -150,4 +150,40 @@ router.post('/', async (req, res) => {
   }
 })
 
+router.delete('/', async (req, res) => {
+  console.log(req.body)
+  const _id = req.body._id
+  if (!_id) {
+    res.json({
+      code: 1,
+      msg: 'Book(ISBN) needed'
+    })
+  }
+
+  const [err, data] = await to(
+    Book.findOne({
+      _id
+    })
+  )
+  if (!data) {
+    res.json({ code: 2, msg: 'book non-exsits' })
+  }
+
+  await to(Book.findOneAndDelete({ _id: _id }))
+
+  if (err) {
+    // todo, determine specif err
+    res.json({
+      code: 1,
+      msg: 'Web Server have problems'
+    })
+    logger.error('Fail to delete', err)
+  } else {
+    res.json({
+      code: 0,
+      msg: 'ok'
+    })
+  }
+})
+
 module.exports = router
